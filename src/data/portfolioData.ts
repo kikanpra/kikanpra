@@ -39,7 +39,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
       "Backdrop seminar yang dirancang untuk menciptakan identitas visual yang kohesif dan profesional, meningkatkan pengalaman peserta, dan memperkuat citra merek acara.",
     tags: ["Event Design", "Backdrop", "Print Design"],
     metrics: "+42% Brand Recall",
-    imageUrl: "/assets/public/images/Backdrop.png",
+    imageUrl: "/images/Backdrop.png",
   },
   {
     id: "p2",
@@ -50,7 +50,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
     description:
       "Atika Care adalah webstie pendaftaran konseling online Universitas Halu Oleo yang dirancang untuk memberikan pengalaman pengguna yang intuitif, responsif, dan aman bagi mahasiswa yang mencari layanan konseling.",
     tags: ["UI/UX", "Figma", "Booking System"],
-    imageUrl: "/assets/public/images/web.png",
+    imageUrl: "/images/web.png",
   },
   {
     id: "p3",
@@ -61,7 +61,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
     description:
       "Produksi video berita yang bergerak cepat dan dioptimalkan untuk platform media sosial. Menampilkan takarir (subtitle) dinamis, grafis gerak yang informatif, serta penyampaian cerita yang ringkas dan dirancang khusus untuk memikat audiens digital PhiaNews.",
     tags: ["CapCut", "News Editing", "Sosial Media"],
-    imageUrl: "/assets/public/images/PhiaNews.png",
+    imageUrl: "/images/PhiaNews.png",
   },
 ];
 
@@ -74,7 +74,7 @@ export const CERTIFICATES_LIST: CertificateItem[] = [
     credentialId: "Desain-Grafis-Kegiatan-Seminar-2026",
     description:
       "Comprehensive qualification in user research, wireframing, interactive prototyping, and usability testing methodologies.",
-    badgeUrl: "/assets/public/images/ser1.png",
+    badgeUrl: "/images/ser1.png",
   },
   {
     id: "c2",
@@ -84,7 +84,7 @@ export const CERTIFICATES_LIST: CertificateItem[] = [
     credentialId: "PKM-GFT-UHO-2025",
     description:
       "Pengajuan proposal Gagasan Futuristik Tertulis (GFT) yang visioner dan realistis, bertujuan untuk menawarkan solusi inovatif terhadap permasalahan bangsa dan global ke depannya.",
-    badgeUrl: "/assets/public/images/pkm.png",
+    badgeUrl: "/images/pkm.png",
   },
   {
     id: "c3",
@@ -94,7 +94,7 @@ export const CERTIFICATES_LIST: CertificateItem[] = [
     credentialId: "MAAIF-2024",
     description:
       "Sertifikat kelulusan atas keberhasilan menyelesaikan program Microsoft Azure AI Fundamentals yang diselenggarakan oleh Microsoft, Kartu Prakerja, dan Mereka.",
-    badgeUrl: "/assets/public/images/AI digital.png",
+    badgeUrl: "/images/AI digital.png",
   },
 ];
 

@@ -48,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center group cursor-pointer"
         >
           <img
-            src="/assets/public/images/logo.png"
+            src="/images/logo.png"
             alt="KIKAN Logo"
             className="w-12 h-12 object-contain group-hover:scale-105 transition-transform duration-300"
           />
