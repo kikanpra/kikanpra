@@ -14,8 +14,8 @@ export const HERO_DATA = {
   githubUrl: "https://github.com/kikanpra",
   linkedinUrl: "https://www.linkedin.com/in/USERNAME_KAMU/",
   location: "Kendari, Indonesia",
-  portraitUrl: "/assets/public/images/cover.png",
-  aboutImageUrl: "/assets/public/images/pov.jpeg",
+  portraitUrl: "/images/cover.png",
+  aboutImageUrl: "/images/pov.jpeg",
 };
 
 export const MARQUEE_ITEMS = [
