@@ -61,7 +61,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
     description:
       "Produksi video berita yang bergerak cepat dan dioptimalkan untuk platform media sosial. Menampilkan takarir (subtitle) dinamis, grafis gerak yang informatif, serta penyampaian cerita yang ringkas dan dirancang khusus untuk memikat audiens digital PhiaNews.",
     tags: ["CapCut", "News Editing", "Sosial Media"],
-    imageUrl: "/images/phiaNews.png",
+    imageUrl: "/images/phianews.png",
   },
 ];
 
