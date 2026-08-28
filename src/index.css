@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #27459e;
+  --color-accent: #A8E86C;
+  --color-background-light: #F5F5F3;
+  --color-background-dark: #0F0F0F;
+  --color-surface-purple: #1b3275;
+
+  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Manrope', sans-serif;
+
+  --radius-4xl: 2rem;
+  --radius-5xl: 3rem;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background-light);
+    color: #0f172a;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    background-color: var(--color-background-dark);
+    color: #f8fafc;
+  }
+}
+
+@keyframes marqueeScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marqueeScroll 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+.perspective-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.perspective-card:hover {
+  transform: translateY(-8px);
+}
