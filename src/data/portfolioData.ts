@@ -39,7 +39,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
       "Backdrop seminar yang dirancang untuk menciptakan identitas visual yang kohesif dan profesional, meningkatkan pengalaman peserta, dan memperkuat citra merek acara.",
     tags: ["Event Design", "Backdrop", "Print Design"],
     metrics: "+42% Brand Recall",
-    imageUrl: "/images/Backdrop.png",
+    imageUrl: "/images/backdrop.png",
   },
   {
     id: "p2",
@@ -61,7 +61,7 @@ export const PROJECTS_LIST: ProjectItem[] = [
     description:
       "Produksi video berita yang bergerak cepat dan dioptimalkan untuk platform media sosial. Menampilkan takarir (subtitle) dinamis, grafis gerak yang informatif, serta penyampaian cerita yang ringkas dan dirancang khusus untuk memikat audiens digital PhiaNews.",
     tags: ["CapCut", "News Editing", "Sosial Media"],
-    imageUrl: "/images/PhiaNews.png",
+    imageUrl: "/images/phiaNews.png",
   },
 ];
 
