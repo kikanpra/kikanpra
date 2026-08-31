@@ -11,7 +11,10 @@ service cloud.firestore {
                     && request.resource.data.name.size() <= 100
                     && request.resource.data.message is string
                     && request.resource.data.message.size() > 0
-                    && request.resource.data.message.size() <= 1000;
+                    && request.resource.data.message.size() <= 1000
+                    && request.resource.data.createdAt is timestamp
+                    && request.resource.data.likes is number
+                    && request.resource.data.avatarColor is string;
 
       // Anyone can increment/decrement like count
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
