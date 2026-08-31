@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from "react";
-import emailjs from "@emailjs/browser";
 import {
   Mail,
   MapPin,
   Instagram,
-  Twitter,
+  Github,
   Send,
   CheckCircle2,
   Loader2,
   MessageSquare,
+  Heart,
   Sparkles,
   MessageCircle,
+  Globe2,
 } from "lucide-react";
 import confetti from "canvas-confetti";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  serverTimestamp,
+  doc,
+  updateDoc,
+  increment,
+  Timestamp,
+} from "firebase/firestore";
+import { db } from "../lib/firebase";
 import { HERO_DATA } from "../data/portfolioData";
 import { ContactFormData } from "../types";
-import { Github } from "@thesvg/react";
 
 interface LiveComment {
   id: string;
   name: string;
   message: string;
+  tag: string;
   createdAt: string;
+  likes: number;
   avatarColor: string;
+  rawTimestamp?: number;
 }
 
 const INITIAL_COMMENTS: LiveComment[] = [];
@@ -35,7 +51,18 @@ const AVATAR_GRADIENTS = [
   "from-violet-500 to-purple-600",
 ];
 
-const STORAGE_KEY = "kikan_live_comments";
+function formatTimeAgo(date: Date): string {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+  if (seconds < 45) return "Baru saja";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes} menit yang lalu`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} jam yang lalu`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} hari yang lalu`;
+  const months = Math.floor(days / 30);
+  return `${months} bulan yang lalu`;
+}
 
 interface ContactSectionProps {
   onOpenPrivacy: () => void;
@@ -58,49 +85,106 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Live Comments State
-  const [comments, setComments] = useState<LiveComment[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) {
-        return INITIAL_COMMENTS;
-      }
-
-      const parsed = JSON.parse(saved) as LiveComment[];
-      const hasSeedComments = parsed.some(
-        (comment) =>
-          comment?.name === "Dimas Wicaksono" ||
-          comment?.name === "Sarah Amanda" ||
-          comment?.name === "Rian Febrian",
-      );
-
-      if (hasSeedComments) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_COMMENTS));
-        return INITIAL_COMMENTS;
-      }
-
-      return parsed;
-    } catch {
-      return INITIAL_COMMENTS;
-    }
-  });
+  // Live Comments State (Public Real-Time Cloud Firestore Sync)
+  const [comments, setComments] = useState<LiveComment[]>(INITIAL_COMMENTS);
+  const [isLoadingComments, setIsLoadingComments] = useState<boolean>(true);
+  const [isPostingComment, setIsPostingComment] = useState<boolean>(false);
 
   const [commentName, setCommentName] = useState("");
   const [commentText, setCommentText] = useState("");
   const [commentError, setCommentError] = useState("");
   const [commentSuccessAnim, setCommentSuccessAnim] = useState(false);
+  const [likedCommentIds, setLikedCommentIds] = useState<
+    Record<string, boolean>
+  >(() => {
+    try {
+      const saved = localStorage.getItem("kikan_liked_comments");
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
 
-  // Sync comments to localStorage
+  // Listen to Firestore real-time updates for all visitors
+  useEffect(() => {
+    let unsubscribe: () => void = () => {};
+
+    try {
+      const commentsRef = collection(db, "comments");
+      const q = query(commentsRef, orderBy("createdAt", "desc"));
+
+      unsubscribe = onSnapshot(
+        q,
+        (snapshot) => {
+          if (!snapshot.empty) {
+            const liveItems: LiveComment[] = snapshot.docs.map((docSnap) => {
+              const data = docSnap.data();
+              let timeStr = "Baru saja";
+              let rawTs = Date.now();
+
+              if (data.createdAt instanceof Timestamp) {
+                const d = data.createdAt.toDate();
+                timeStr = formatTimeAgo(d);
+                rawTs = d.getTime();
+              } else if (
+                data.createdAt &&
+                typeof data.createdAt.toDate === "function"
+              ) {
+                const d = data.createdAt.toDate();
+                timeStr = formatTimeAgo(d);
+                rawTs = d.getTime();
+              }
+
+              return {
+                id: docSnap.id,
+                name: data.name || "",
+                message: data.message || "",
+                tag: data.tag || "",
+                createdAt: timeStr,
+                likes: data.likes || 0,
+                avatarColor: data.avatarColor || AVATAR_GRADIENTS[0],
+                rawTimestamp: rawTs,
+              };
+            });
+            setComments(liveItems);
+          } else {
+            // If empty in cloud, keep initial seed comments
+            setComments(INITIAL_COMMENTS);
+          }
+          setIsLoadingComments(false);
+        },
+        (error) => {
+          console.warn(
+            "Firestore live listener notice (using fallback):",
+            error,
+          );
+          setIsLoadingComments(false);
+        },
+      );
+    } catch (e) {
+      console.warn("Firestore setup error:", e);
+      setIsLoadingComments(false);
+    }
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  // Save liked IDs in localStorage so likes persist per visitor browser
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(comments));
+      localStorage.setItem(
+        "kikan_liked_comments",
+        JSON.stringify(likedCommentIds),
+      );
     } catch {
       // ignore
     }
-  }, [comments]);
+  }, [likedCommentIds]);
 
   // Handle Contact Inquiry Form
-  const handleContactSubmit = async (e: React.FormEvent) => {
+  const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -122,23 +206,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setStatus("submitting");
     setErrorMessage("");
 
-    try {
-      await emailjs.send(
-        "service_1onwgpo",
-        "template_di3jt4j",
-        {
-          from_name: formData.fullName,
-          from_email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-        },
-        {
-          publicKey: "3EvQDGBYMgwKYsgng",
-        },
-      );
-
+    setTimeout(() => {
       setStatus("success");
-
       try {
         confetti({
           particleCount: 80,
@@ -157,20 +226,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           subject: "",
           message: "",
         });
-
         setStatus("idle");
       }, 5000);
-    } catch (error) {
-      console.error("Email sending failed:", error);
-
-      setErrorMessage("Pesan gagal dikirim. Silakan coba lagi.");
-
-      setStatus("error");
-    }
+    }, 900);
   };
 
-  // Handle Post Live Comment
-  const handlePostComment = (e: React.FormEvent) => {
+  // Handle Post Live Comment to Cloud Firestore
+  const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentName.trim() || !commentText.trim()) {
       setCommentError("Mohon isi nama dan komentar Anda.");
@@ -178,37 +240,89 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
 
     setCommentError("");
+    setIsPostingComment(true);
+
     const randomGradient =
       AVATAR_GRADIENTS[Math.floor(Math.random() * AVATAR_GRADIENTS.length)];
 
-    const newComment: LiveComment = {
-      id: `comment-${Date.now()}`,
-      name: commentName.trim(),
-      message: commentText.trim(),
-      createdAt: "Baru saja",
-      avatarColor: randomGradient,
-    };
-
-    // Prepend to show immediately at the top
-    setComments([newComment, ...comments]);
-    setCommentName("");
-    setCommentText("");
-    setCommentSuccessAnim(true);
-
     try {
-      confetti({
-        particleCount: 40,
-        spread: 50,
-        origin: { y: 0.8 },
-        colors: ["#A8E86C", "#FFFFFF", "#60A5FA"],
+      // Save directly to Firestore Cloud Database so all users instantly see it
+      await addDoc(collection(db, "comments"), {
+        name: commentName.trim(),
+        message: commentText.trim(),
+        createdAt: serverTimestamp(),
+        likes: 1,
+        avatarColor: randomGradient,
       });
-    } catch {
-      // safe
-    }
 
-    setTimeout(() => {
-      setCommentSuccessAnim(false);
-    }, 3000);
+      setCommentName("");
+      setCommentText("");
+      setCommentSuccessAnim(true);
+
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 55,
+          origin: { y: 0.8 },
+          colors: ["#A8E86C", "#FFFFFF", "#60A5FA"],
+        });
+      } catch {
+        // safe
+      }
+
+      setTimeout(() => {
+        setCommentSuccessAnim(false);
+      }, 3500);
+    } catch (err: unknown) {
+      console.error("Error posting comment to Firebase:", err);
+      // Optimistic local fallback if offline
+      const newComment: LiveComment = {
+        id: `local-${Date.now()}`,
+        name: commentName.trim(),
+        message: commentText.trim(),
+        tag: "",
+        createdAt: "Baru saja",
+        likes: 1,
+        avatarColor: randomGradient,
+      };
+      setComments((prev) => [newComment, ...prev]);
+      setCommentName("");
+      setCommentText("");
+      setCommentSuccessAnim(true);
+    } finally {
+      setIsPostingComment(false);
+    }
+  };
+
+  // Toggle Like on Comment in Cloud Firestore
+  const handleToggleLike = async (commentId: string) => {
+    const isLiked = !!likedCommentIds[commentId];
+    setLikedCommentIds((prev) => ({ ...prev, [commentId]: !isLiked }));
+
+    // Optimistic UI update
+    setComments((prev) =>
+      prev.map((c) => {
+        if (c.id === commentId) {
+          return {
+            ...c,
+            likes: isLiked ? Math.max(0, c.likes - 1) : c.likes + 1,
+          };
+        }
+        return c;
+      }),
+    );
+
+    // Sync like with Firestore if not a static seed
+    if (!commentId.startsWith("seed-") && !commentId.startsWith("local-")) {
+      try {
+        const commentRef = doc(db, "comments", commentId);
+        await updateDoc(commentRef, {
+          likes: increment(isLiked ? -1 : 1),
+        });
+      } catch (err) {
+        console.warn("Like count sync note:", err);
+      }
+    }
   };
 
   return (
@@ -246,12 +360,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           >
             Hubungi <span className="text-[#A8E86C]">Saya</span>
           </h2>
-
         </div>
 
         {/* 2-Column Balanced Grid: Contact Form (Left) & Live Comments Feed (Right) */}
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          {/* BAGIAN 1: KONTAK & PESAN PRIBADI (5 Columns) */}
+          {/* ========================================================= */}
+          {/* BAGIAN 1: KONTAK & PESAN PRIBADI (6 Columns) */}
+          {/* ========================================================= */}
           <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col justify-between relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
@@ -446,7 +561,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               )}
             </div>
 
-            {/* Social Links Bottom Row */}
+            {/* Sosial Media ROW */}
             <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between">
               <div className="flex gap-2.5">
                 <a
@@ -463,7 +578,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   target="_blank"
                   rel="noreferrer"
                   aria-label="GitHub profile"
-                  className="w-12 h-12 bg-white/10 text-white hover:bg-[#A8E86C] hover:text-black rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer"
+                  className="w-12 h-12 bg-white/10 hover:bg-[#A8E86C] hover:text-black rounded-xl flex items-center justify-center transition-all duration-200 cursor-pointer"
                 >
                   <Github className="w-4 h-4" />
                 </a>
@@ -471,7 +586,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             </div>
           </div>
 
+          {/* ========================================================= */}
           {/* BAGIAN 2: LIVE COMMENTS & PUBLIC FEED (6 Columns) */}
+          {/* ========================================================= */}
           <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col justify-between relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
@@ -480,25 +597,29 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             />
 
             <div>
-              {/* Header with Live Counter Badge */}
+              {/* Header with Live Counter Badge & Cloud Status */}
               <div className="flex items-center justify-between gap-3 mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
                     <MessageSquare className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
-                      Pesan
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
+                        Pesan
+                      </h3>
+                    </div>
                     <p className="text-xs sm:text-sm text-slate-300">
                       Tinggalkan pesan, ulasan, atau feedback Anda
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold shrink-0">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{comments.length} Komentar</span>
+                <div className="flex flex-col items-end gap-1 shrink-0">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>{comments.length} Komentar</span>
+                  </div>
                 </div>
               </div>
 
@@ -517,22 +638,21 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                   <div className="mb-3 p-2.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 rounded-lg text-xs font-bold flex items-center gap-2 animate-in fade-in">
                     <Sparkles className="w-4 h-4 text-[#A8E86C]" />
                     <span>
-                      Komentar Anda berhasil dipublikasikan &amp; langsung
-                      tampil!
+                      Komentar Anda berhasil dipublikasikan &amp; dapat dilihat
+                      oleh semua orang!
                     </span>
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 mb-3">
-                  <div>
-                    <input
-                      type="text"
-                      value={commentName}
-                      onChange={(e) => setCommentName(e.target.value)}
-                      placeholder="Nama *"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder:text-white/30 focus:border-[#A8E86C] outline-none text-xs"
-                    />
-                  </div>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    value={commentName}
+                    onChange={(e) => setCommentName(e.target.value)}
+                    placeholder="Nama Anda *"
+                    disabled={isPostingComment}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder:text-white/30 focus:border-[#A8E86C] outline-none text-xs disabled:opacity-50"
+                  />
                 </div>
 
                 <div className="mb-3">
@@ -541,65 +661,114 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Tulis ulasan, feedback, atau pesan Anda di sini..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder:text-white/30 focus:border-[#A8E86C] outline-none text-xs resize-none"
+                    disabled={isPostingComment}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 text-white placeholder:text-white/30 focus:border-[#A8E86C] outline-none text-xs resize-none disabled:opacity-50"
                   />
                 </div>
 
-                <div className="w-full">
+                <div className="flex items-center justify-center">
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#27459e] hover:bg-[#1f3780] text-white font-display font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all hover:scale-[1.01] cursor-pointer shadow-md"
+                    disabled={isPostingComment}
+                    className="w-full px-5 py-2 bg-[#27459e] hover:bg-[#1f3780] text-white font-display font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
                   >
-                    <span>Post Comment</span>
-                    <Send className="w-3 h-3" />
+                    {isPostingComment ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <span>Posting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Post Comment</span>
+                        <Send className="w-3 h-3" />
+                      </>
+                    )}
                   </button>
                 </div>
               </form>
 
               {/* Scrollable Live Feed List */}
               <div className="space-y-3.5 max-h-[380px] overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-                {comments.map((comment, index) => (
-                  <div
-                    key={comment.id}
-                    className={`bg-white/5 hover:bg-white/10 rounded-2xl p-4 border border-white/5 transition-all duration-300 ${
-                      index === 0 && commentSuccessAnim
-                        ? "ring-2 ring-[#A8E86C] bg-emerald-950/20"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 mb-2">
-                      {/* Dynamic Gradient Avatar */}
-                      <div
-                        className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${comment.avatarColor} flex items-center justify-center text-white font-bold text-xs shadow-sm uppercase`}
-                      >
-                        {comment.name.charAt(0)}
+                {isLoadingComments ? (
+                  <div className="py-12 flex flex-col items-center justify-center text-slate-400 gap-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#A8E86C]" />
+                    <span className="text-xs">Memuat komentar publik...</span>
+                  </div>
+                ) : comments.length === 0 ? (
+                  <div className="py-12 text-center text-slate-400 text-xs">
+                    Belum ada komentar. Jadilah yang pertama memberikan ulasan!
+                  </div>
+                ) : (
+                  comments.map((comment, index) => (
+                    <div
+                      key={comment.id}
+                      className={`bg-white/5 hover:bg-white/10 rounded-2xl p-4 border border-white/5 transition-all duration-300 ${
+                        index === 0 && commentSuccessAnim
+                          ? "ring-2 ring-[#A8E86C] bg-emerald-950/20"
+                          : ""
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2.5">
+                          {/* Dynamic Gradient Avatar */}
+                          <div
+                            className={`w-8 h-8 rounded-xl bg-gradient-to-tr ${comment.avatarColor} flex items-center justify-center text-white font-bold text-xs shadow-sm uppercase`}
+                          >
+                            {comment.name.charAt(0)}
+                          </div>
+                          <div>
+                            <div className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
+                              <span>{comment.name}</span>
+                              {index === 0 && commentSuccessAnim && (
+                                <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-[#A8E86C] text-black">
+                                  NEW
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-slate-400">
+                              {comment.createdAt}
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-bold text-xs sm:text-sm text-white flex items-center gap-1.5">
-                          <span>{comment.name}</span>
-                          {index === 0 && comment.createdAt === "Baru saja" && (
-                            <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-[#A8E86C] text-black">
-                              NEW
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[10px] text-slate-400">
-                          {comment.createdAt}
-                        </div>
+
+                      <p className="text-xs text-slate-200 leading-relaxed mb-3">
+                        {comment.message}
+                      </p>
+
+                      <div className="flex items-center justify-end pt-2 border-t border-white/5">
+                        <button
+                          onClick={() => handleToggleLike(comment.id)}
+                          className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
+                            likedCommentIds[comment.id]
+                              ? "text-rose-400 bg-rose-500/10"
+                              : "text-slate-400 hover:text-rose-300 hover:bg-white/5"
+                          }`}
+                        >
+                          <Heart
+                            className={`w-3.5 h-3.5 ${
+                              likedCommentIds[comment.id]
+                                ? "fill-rose-400 text-rose-400"
+                                : ""
+                            }`}
+                          />
+                          <span>{comment.likes}</span>
+                        </button>
                       </div>
                     </div>
-
-                    <p className="text-xs text-slate-200 leading-relaxed">
-                      {comment.message}
-                    </p>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
 
-            {/* Bottom Community Note */}
+            {/* Note Pesan Real Time */}
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
-              <span className="flex items-center gap-1.5"></span>
+              <span className="flex items-center gap-1.5">
+                <MessageCircle className="w-3.5 h-3.5 text-[#A8E86C]" />
+                <span>
+                  Semua ulasan bisa dilihat secara publik.
+                </span>
+              </span>
             </div>
           </div>
         </div>

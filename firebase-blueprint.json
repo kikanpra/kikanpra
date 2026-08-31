@@ -1,0 +1,31 @@
+{
+"entities": {
+    "Comment": {
+    "fields": {
+        "name": { "type": "string", "description": "Name of the commenter" },
+        "message": { "type": "string", "description": "Comment text" },
+        "tag": { "type": "string", "description": "Category badge or tag" },
+        "createdAt": {
+        "type": "timestamp",
+        "description": "Timestamp when comment was created"
+        },
+        "likes": { "type": "number", "description": "Number of likes" },
+        "avatarColor": {
+        "type": "string",
+        "description": "Tailwind avatar gradient classes"
+        }
+    }
+    }
+},
+"firestore": {
+    "/comments/{commentId}": {
+    "entity": "Comment",
+    "rules": {
+        "read": "true",
+        "create": "request.resource.data.name is string && request.resource.data.message is string",
+        "update": "request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])",
+        "delete": "false"
+    }
+    }
+}
+}
