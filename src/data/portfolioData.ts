@@ -15,7 +15,7 @@ export const HERO_DATA = {
   linkedinUrl: "https://www.linkedin.com/in/USERNAME_KAMU/",
   location: "Kendari, Indonesia",
   portraitUrl: "/images/cover.png",
-  aboutImageUrl: "/images/pov.jpeg",
+  aboutImageUrl: "/images/fotoaboutme2.jpeg",
 };
 
 export const MARQUEE_ITEMS = [

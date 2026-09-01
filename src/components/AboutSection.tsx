@@ -146,14 +146,28 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
     <section
       id="about"
       ref={sectionRef}
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-24 md:py-32 bg-[#1b3275] text-white relative overflow-hidden transition-colors duration-300 border-t border-white/10"
     >
+      {/* Ambient background glows matching Portfolio Showcase */}
+      <div
+        className="absolute -bottom-24 -left-24 w-96 h-96 bg-[#27459e]/60 rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute -top-24 -right-24 w-96 h-96 bg-[#A8E86C]/15 rounded-full blur-3xl pointer-events-none"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-[#27459e]/30 blur-[130px] rounded-full pointer-events-none"
+        aria-hidden="true"
+      />
+
       {/* =========================================
           HUGE OUTLINE WATERMARK
       ========================================= */}
 
       <div
-        className="absolute top-6 right-0 font-display text-[14vw] font-black leading-none text-slate-900/[0.04] dark:text-white/[0.04] pointer-events-none select-none tracking-tight overflow-hidden"
+        className="absolute top-6 right-0 font-display text-[14vw] font-black leading-none text-white/[0.04] dark:text-white/[0.04] pointer-events-none select-none tracking-tight overflow-hidden"
         aria-hidden="true"
       >
         ABOUT ME
@@ -168,7 +182,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
           <div className="lg:col-span-5 relative">
             <div
               id="about-experience-card"
-              className="rounded-[2.5rem] sm:rounded-[3rem] aspect-square max-w-[440px] mx-auto relative overflow-hidden shadow-2xl group border border-black/5 dark:border-white/10"
+              className="rounded-[2.5rem] sm:rounded-[3rem] aspect-square max-w-[440px] mx-auto relative overflow-hidden shadow-2xl group border border-white/10"
             >
               {/* Background Picture */}
               <img
@@ -196,7 +210,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
                 aria-hidden="true"
               >
                 <span className="[writing-mode:vertical-lr] rotate-180 drop-shadow-md">
-                  Kikan - 2023
+                  Kikan
                 </span>
               </div>
             </div>
@@ -210,7 +224,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
             {/* Section Tag */}
             <div
               id="about-section-tag"
-              className="inline-block py-1.5 px-4 bg-[#27459e]/10 text-[#27459e] dark:text-[#A8E86C] dark:bg-[#A8E86C]/10 rounded-full text-xs sm:text-sm font-bold tracking-wide mb-6"
+              className="inline-block py-1.5 px-4 bg-white/10 text-[#A8E86C] rounded-full text-xs sm:text-sm font-bold tracking-wide mb-6 border border-white/10 backdrop-blur-sm"
             >
               — Tentang Saya
             </div>
@@ -218,10 +232,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
             {/* Heading */}
             <h2
               id="about-heading"
-              className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white leading-tight mb-8"
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold :text-white leading-tight mb-8"
             >
               Hi, Saya{" "}
-              <span className="text-[#27459e] dark:text-[#A8E86C] relative inline-block">
+              <span className="text-[#A8E86C]">
                 {HERO_DATA.fullName}
               </span>
             </h2>
@@ -240,11 +254,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
 
             <div
               id="about-stats-grid"
-              className="grid grid-cols-3 gap-4 sm:gap-8 mb-12 border-y border-black/5 dark:border-white/10 py-6"
+              className="grid grid-cols-3 gap-4 sm:gap-8 mb-12 border-y :border-white/10 py-6"
             >
               {/* PROJECTS */}
               <div>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#27459e] dark:text-[#A8E86C] mb-1">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold :text-[#A8E86C] mb-1">
                   <AnimatedCounter
                     target={projectsTarget}
                     suffix="+"
@@ -285,7 +299,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+                <div className="text-xs sm:text-sm font-semibold text-slate-300">
                   Pengalaman
                 </div>
               </div>

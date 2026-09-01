@@ -20,28 +20,36 @@ import {
   SERVICES_LIST,
   HERO_DATA,
 } from '../data/portfolioData';
-import { ServiceItem } from '../types';
+import { ProjectItem, ServiceItem } from '../types';
 
 // ======================= PORTFOLIO MODAL =======================
 interface PortfolioModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectProjectForInquiry?: (projectTitle: string) => void;
+  onViewProjectDetail?: (project: ProjectItem) => void;
 }
 
 export const PortfolioModal: React.FC<PortfolioModalProps> = ({
   isOpen,
   onClose,
   onSelectProjectForInquiry,
+  onViewProjectDetail,
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
 
   if (!isOpen) return null;
 
-  const categories = ['All', 'Graphic Design', 'Video Editing', 'Web Design', 'Branding'];
+  const categories = [
+    "All",
+    "Graphic Design",
+    "Video Editing",
+    "Web Design",
+    "Branding",
+  ];
 
   const filteredProjects =
-    selectedCategory === 'All'
+    selectedCategory === "All"
       ? PROJECTS_LIST
       : PROJECTS_LIST.filter((p) => p.category === selectedCategory);
 
@@ -83,8 +91,8 @@ export const PortfolioModal: React.FC<PortfolioModalProps> = ({
               onClick={() => setSelectedCategory(cat)}
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-[#27459e] text-white shadow-sm'
-                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  ? "bg-[#27459e] text-white shadow-sm"
+                  : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               {cat}
@@ -117,14 +125,19 @@ export const PortfolioModal: React.FC<PortfolioModalProps> = ({
                     <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#27459e]/10 text-[#27459e] dark:bg-[#A8E86C]/10 dark:text-[#A8E86C]">
                       {project.category}
                     </span>
-                    <span className="text-xs font-mono text-slate-400 font-semibold">{project.year}</span>
+                    <span className="text-xs font-mono text-slate-400 font-semibold">
+                      {project.year}
+                    </span>
                   </div>
 
                   <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white mb-1 group-hover:text-[#27459e] transition-colors">
                     {project.title}
                   </h3>
                   <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-3">
-                    Client: <span className="font-semibold text-slate-700 dark:text-slate-200">{project.client}</span>
+                    Client:{" "}
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">
+                      {project.client}
+                    </span>
                   </div>
 
                   <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">

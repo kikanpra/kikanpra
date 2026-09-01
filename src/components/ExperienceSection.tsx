@@ -12,12 +12,14 @@ import { ProjectItem, CertificateItem } from "../types";
 
 interface ExperienceSectionProps {
   onOpenPortfolio: () => void;
+  onSelectProject?: (project: ProjectItem) => void;
 }
 
 type TabType = "projects" | "certificates";
 
 export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   onOpenPortfolio,
+  onSelectProject,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("projects");
   const [previewImage, setPreviewImage] = useState<{
@@ -37,11 +39,12 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
       label: "Certificates",
       icon: <Award className="w-4 h-4" />,
     },
-
   ];
 
   const handleProjectPreview = (project: ProjectItem) => {
-    if (project.imageUrl) {
+    if (onSelectProject) {
+      onSelectProject(project);
+    } else if (project.imageUrl) {
       setPreviewImage({
         url: project.imageUrl,
         title: project.title,
@@ -59,8 +62,6 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
       });
     }
   };
-
-
 
   return (
     <section
@@ -187,8 +188,8 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               </div>
             </div>
           )}
-            </div>
         </div>
+      </div>
 
       {/* Lightbox / Enlarged Image Preview Modal */}
       {previewImage && (

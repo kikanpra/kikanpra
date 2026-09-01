@@ -4,9 +4,12 @@ export interface ProjectItem {
   category: 'Graphic Design' | 'UI/UX Design' | 'Web Design' | 'Branding';
   client: string;
   year: string;
+  heading?: string;
   description: string;
+  software?: string[];
   tags: string[];
   imageUrl?: string;
+  image?: string;
   metrics?: string;
 }
 

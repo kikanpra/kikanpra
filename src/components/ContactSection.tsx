@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   Loader2,
   MessageSquare,
-  Heart,
   Sparkles,
   MessageCircle,
   Globe2,
@@ -21,9 +20,6 @@ import {
   query,
   orderBy,
   serverTimestamp,
-  doc,
-  updateDoc,
-  increment,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -94,16 +90,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   const [commentText, setCommentText] = useState("");
   const [commentError, setCommentError] = useState("");
   const [commentSuccessAnim, setCommentSuccessAnim] = useState(false);
-  const [likedCommentIds, setLikedCommentIds] = useState<
-    Record<string, boolean>
-  >(() => {
-    try {
-      const saved = localStorage.getItem("kikan_liked_comments");
-      return saved ? JSON.parse(saved) : {};
-    } catch {
-      return {};
-    }
-  });
 
   // Listen to Firestore real-time updates for all visitors
   useEffect(() => {
@@ -141,7 +127,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                 message: data.message || "",
                 tag: data.tag || "",
                 createdAt: timeStr,
-                likes: data.likes || 0,
+                likes: 0,
                 avatarColor: data.avatarColor || AVATAR_GRADIENTS[0],
                 rawTimestamp: rawTs,
               };
@@ -171,19 +157,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     };
   }, []);
 
-  // Save liked IDs in localStorage so likes persist per visitor browser
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        "kikan_liked_comments",
-        JSON.stringify(likedCommentIds),
-      );
-    } catch {
-      // ignore
-    }
-  }, [likedCommentIds]);
-
-  // Handle Contact Inquiry Form
+// Handle Contact Inquiry Form
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -251,7 +225,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         name: commentName.trim(),
         message: commentText.trim(),
         createdAt: serverTimestamp(),
-        likes: 1,
         avatarColor: randomGradient,
       });
 
@@ -282,7 +255,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         message: commentText.trim(),
         tag: "",
         createdAt: "Baru saja",
-        likes: 1,
+        likes: 0,
         avatarColor: randomGradient,
       };
       setComments((prev) => [newComment, ...prev]);
@@ -294,38 +267,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
   };
 
-  // Toggle Like on Comment in Cloud Firestore
-  const handleToggleLike = async (commentId: string) => {
-    const isLiked = !!likedCommentIds[commentId];
-    setLikedCommentIds((prev) => ({ ...prev, [commentId]: !isLiked }));
-
-    // Optimistic UI update
-    setComments((prev) =>
-      prev.map((c) => {
-        if (c.id === commentId) {
-          return {
-            ...c,
-            likes: isLiked ? Math.max(0, c.likes - 1) : c.likes + 1,
-          };
-        }
-        return c;
-      }),
-    );
-
-    // Sync like with Firestore if not a static seed
-    if (!commentId.startsWith("seed-") && !commentId.startsWith("local-")) {
-      try {
-        const commentRef = doc(db, "comments", commentId);
-        await updateDoc(commentRef, {
-          likes: increment(isLiked ? -1 : 1),
-        });
-      } catch (err) {
-        console.warn("Like count sync note:", err);
-      }
-    }
-  };
-
-  return (
+return (
     <section
       id="contact"
       className="py-24 md:py-32 bg-[#1b3275] text-white relative overflow-hidden transition-colors duration-300 border-t border-white/10"
@@ -737,23 +679,6 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                       </p>
 
                       <div className="flex items-center justify-end pt-2 border-t border-white/5">
-                        <button
-                          onClick={() => handleToggleLike(comment.id)}
-                          className={`flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg transition-colors cursor-pointer ${
-                            likedCommentIds[comment.id]
-                              ? "text-rose-400 bg-rose-500/10"
-                              : "text-slate-400 hover:text-rose-300 hover:bg-white/5"
-                          }`}
-                        >
-                          <Heart
-                            className={`w-3.5 h-3.5 ${
-                              likedCommentIds[comment.id]
-                                ? "fill-rose-400 text-rose-400"
-                                : ""
-                            }`}
-                          />
-                          <span>{comment.likes}</span>
-                        </button>
                       </div>
                     </div>
                   ))

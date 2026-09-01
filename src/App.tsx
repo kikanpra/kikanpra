@@ -3,10 +3,13 @@ import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { MarqueeBanner } from "./components/MarqueeBanner";
 import { AboutSection } from "./components/AboutSection";
-import { ExperienceSection } from "./components/ExperienceSection";
 import { TechStackSection } from "./components/TechStackSection";
+import { ExperienceSection } from "./components/ExperienceSection";
 import { ContactSection } from "./components/ContactSection";
+import { GallerySection } from "./components/Gallery";
 import { PortfolioModal, CVModal, LegalModal } from "./components/Modals";
+import { ProjectItem } from "./types";
+import { ProjectDetail } from "./components/ProjectDetail";
 
 export default function App() {
   const [portfolioModalOpen, setPortfolioModalOpen] = useState(false);
@@ -14,6 +17,9 @@ export default function App() {
   const [legalModalType, setLegalModalType] = useState<
     "privacy" | "terms" | null
   >(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(
+    null,
+  );
 
   useEffect(() => {
     // Ensure dark class is always active permanently
@@ -22,14 +28,27 @@ export default function App() {
   }, []);
 
   const handleHireMeClick = () => {
-    const contactElement = document.getElementById("contact");
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: "smooth" });
-      const nameInput = document.getElementById("input-full-name");
-      if (nameInput) {
-        setTimeout(() => nameInput.focus(), 600);
+    setSelectedProject(null);
+    setTimeout(() => {
+      const contactElement = document.getElementById("contact");
+      if (contactElement) {
+        contactElement.scrollIntoView({ behavior: "smooth" });
+        const nameInput = document.getElementById("input-full-name");
+        if (nameInput) {
+          setTimeout(() => nameInput.focus(), 600);
+        }
       }
-    }
+    }, 50);
+  };
+
+  const handleNavigateSection = (sectionId: string) => {
+    setSelectedProject(null);
+    setTimeout(() => {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
   };
 
   const handleSelectProjectForInquiry = (projectTitle: string) => {
@@ -48,6 +67,29 @@ export default function App() {
       }
     }
   };
+
+  // If a single project is selected, display ONLY the dedicated single-card Project Detail page
+  if (selectedProject) {
+    return (
+      <div
+        id="kikan-project-detail-view"
+        className="min-h-screen bg-[#FFFFFF] text-slate-900 font-sans selection:bg-[#A8E86C] selection:text-black"
+      >
+        <ProjectDetail
+          project={selectedProject}
+          onBack={() => setSelectedProject(null)}
+          onOpenPrivacy={() => setLegalModalType("privacy")}
+          onOpenTerms={() => setLegalModalType("terms")}
+        />
+
+        <LegalModal
+          isOpen={legalModalType !== null}
+          type={legalModalType}
+          onClose={() => setLegalModalType(null)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -70,16 +112,20 @@ export default function App() {
         {/* Endless Marquee Banner */}
         <MarqueeBanner />
 
-        {/* About Section */}
+        {/* About Section  (with Blue Background) */}
         <AboutSection onDownloadCV={() => setCvModalOpen(true)} />
+
+        {/* Tech Stack & Creative Tools Section (Moved above Portfolio Showcase) */}
+        <TechStackSection />
 
         {/* Portfolio Showcase (Education & Work Section) */}
         <ExperienceSection
           onOpenPortfolio={() => setPortfolioModalOpen(true)}
+          onSelectProject={(project) => setSelectedProject(project)}
         />
 
         {/* Tech Stack Section */}
-        <TechStackSection />
+        <GallerySection />
 
         {/* Contact & Footer Section */}
         <ContactSection
@@ -93,6 +139,7 @@ export default function App() {
         isOpen={portfolioModalOpen}
         onClose={() => setPortfolioModalOpen(false)}
         onSelectProjectForInquiry={handleSelectProjectForInquiry}
+        onViewProjectDetail={(project) => setSelectedProject(project)}
       />
 
       <CVModal isOpen={cvModalOpen} onClose={() => setCvModalOpen(false)} />

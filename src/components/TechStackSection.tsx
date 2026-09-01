@@ -106,14 +106,14 @@ export const TechStackSection: React.FC = () => {
             id="tech-stack-tag"
             className="mb-6 inline-block rounded-full border border-white/10 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide text-[#A8E86C] backdrop-blur-sm sm:text-sm"
           >
-            — Tools
+            — Teknologi
           </div>
 
           <h2
             id="tech-stack-heading"
             className="mb-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl"
           >
-            Tech <span className="text-[#A8E86C]">Stack</span>
+            Software <span className="text-[#A8E86C]">Skills</span>
           </h2>
         </div>
 
