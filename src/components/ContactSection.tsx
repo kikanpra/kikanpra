@@ -220,7 +220,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
       AVATAR_GRADIENTS[Math.floor(Math.random() * AVATAR_GRADIENTS.length)];
 
     try {
-      // Save directly to Firestore Cloud Database so all users instantly see it
+      // Simpan ke Firebase
       await addDoc(collection(db, "comments"), {
         name: commentName.trim(),
         message: commentText.trim(),
