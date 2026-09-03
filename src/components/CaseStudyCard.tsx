@@ -34,8 +34,7 @@ export const getTagColorClass = (tag: string) => {
   if (
     upper.includes("PACKAG") ||
     upper.includes("PRINT") ||
-    upper.includes("ILLUSTRATION") ||
-    upper.includes("VERIFIED")
+    upper.includes("ILLUSTRATION")
   ) {
     return "bg-[#CFEBD9] text-[#1E5D36] dark:bg-[#1E4A2E]/60 dark:text-[#BAE8CB]";
   }
@@ -77,7 +76,7 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
   return (
     <div
       onClick={() => onPreview(project)}
-      className={`group flex flex-col justify-between ${cardBgClass} rounded-[2rem] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 cursor-pointer border border-black/[0.04] dark:border-white/10`}
+      className={`group flex flex-col ${cardBgClass} rounded-[2rem] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 cursor-pointer border border-black/[0.04] dark:border-white/10`}
     >
       {/* 1. Top Image Box (Full-bleed at Top, Left, and Right) */}
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800">
@@ -130,7 +129,7 @@ export const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
       </div>
 
       {/* 2. Bottom Content Area for Text Highlight */}
-      <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
+      <div className="p-5 sm:p-6 flex flex-col">
         <div>
           <h3 className="font-display font-bold text-xl sm:text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-[#27459e] dark:group-hover:text-[#A8E86C] transition-colors line-clamp-1">
             {project.title}
@@ -232,19 +231,11 @@ export const CertificateCaseCard: React.FC<CertificateCaseCardProps> = ({
           <h3 className="font-display font-bold text-xl sm:text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-[#27459e] dark:group-hover:text-[#A8E86C] transition-colors line-clamp-1">
             {certificate.title}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed line-clamp-2">
-            {certificate.description}
-          </p>
         </div>
 
         {/* Tag Pills Grid */}
         <div className="mt-5 pt-4 flex flex-wrap items-center justify-between gap-2 border-t border-black/[0.04] dark:border-white/5">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span
-              className={`text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg ${getTagColorClass("VERIFIED")}`}
-            >
-              VERIFIED
-            </span>
             <span
               className={`text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg ${getTagColorClass(certificate.issuer)}`}
             >
@@ -256,114 +247,6 @@ export const CertificateCaseCard: React.FC<CertificateCaseCardProps> = ({
               {certificate.year}
             </span>
           </div>
-          <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">
-            ID: {certificate.credentialId}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ======================= EXPERIENCE CASE CARD =======================
-interface ExperienceCaseCardProps {
-  experience: ExperienceItem;
-  index: number;
-  onPreview: (experience: ExperienceItem) => void;
-  cardBgClass?: string;
-  notchFillClass?: string;
-}
-
-export const ExperienceCaseCard: React.FC<ExperienceCaseCardProps> = ({
-  experience,
-  index,
-  onPreview,
-  cardBgClass = "bg-[#FAF9F5] dark:bg-slate-900",
-  notchFillClass = "text-[#FAF9F5] dark:text-slate-900",
-}) => {
-  const colorScheme = PASTEL_COLORS[index % PASTEL_COLORS.length];
-
-  return (
-    <div
-      onClick={() => onPreview(experience)}
-      className={`group flex flex-col justify-between ${cardBgClass} rounded-[2rem] overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1.5 cursor-pointer border border-black/[0.04] dark:border-white/10`}
-    >
-      {/* Top Image Box (Full-bleed) */}
-      <div className="relative w-full aspect-[4/3] overflow-hidden bg-slate-200 dark:bg-slate-800">
-        <img
-          src={experience.imageUrl}
-          alt={experience.role}
-          referrerPolicy="no-referrer"
-          loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-
-        {/* Bottom-Right Inverted Notch Container */}
-        <div
-          className={`absolute bottom-0 right-0 w-14 h-14 sm:w-16 sm:h-16 ${cardBgClass} rounded-tl-[1.75rem] flex items-center justify-center z-10`}
-        >
-          <svg
-            className={`absolute -top-4 right-0 w-4 h-4 ${notchFillClass} fill-current pointer-events-none`}
-            viewBox="0 0 16 16"
-            aria-hidden="true"
-          >
-            <path d="M16 0 V16 H0 A16 16 0 0 0 16 0 Z" />
-          </svg>
-
-          <svg
-            className={`absolute bottom-0 -left-4 w-4 h-4 ${notchFillClass} fill-current pointer-events-none`}
-            viewBox="0 0 16 16"
-            aria-hidden="true"
-          >
-            <path d="M16 0 V16 H0 A16 16 0 0 0 16 0 Z" />
-          </svg>
-
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onPreview(experience);
-            }}
-            aria-label={`View ${experience.role}`}
-            style={{
-              backgroundColor: colorScheme.bg,
-              color: colorScheme.text,
-            }}
-            className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm transition-transform duration-300 group-hover:scale-110 cursor-pointer"
-          >
-            <ArrowUpRight className="w-5 h-5 stroke-[2.5]" />
-          </button>
-        </div>
-      </div>
-
-      {/* Bottom Content Area */}
-      <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
-        <div>
-          <h3 className="font-display font-bold text-xl sm:text-2xl text-slate-900 dark:text-white tracking-tight group-hover:text-[#27459e] dark:group-hover:text-[#A8E86C] transition-colors line-clamp-1">
-            {experience.role}
-          </h3>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-2 leading-relaxed line-clamp-2">
-            {experience.company} • {experience.location} —{" "}
-            {experience.responsibilities[0] || ""}
-          </p>
-        </div>
-
-        {/* Tag Pills Grid */}
-        <div className="mt-5 pt-4 flex flex-wrap items-center justify-between gap-2 border-t border-black/[0.04] dark:border-white/5">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span
-              className={`text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg ${getTagColorClass("EXPERIENCE")}`}
-            >
-              {experience.period}
-            </span>
-            <span
-              className={`text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider px-3 py-1.5 rounded-lg ${getTagColorClass(experience.company)}`}
-            >
-              {experience.company}
-            </span>
-          </div>
-          <span className="text-[10px] font-semibold text-slate-500">
-            {experience.location}
-          </span>
         </div>
       </div>
     </div>

@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { Code2, Award, Layers, ArrowRight, X } from "lucide-react";
-import {
-  PROJECTS_LIST,
-  CERTIFICATES_LIST,
-} from "../data/portfolioData";
-import {
-  CaseStudyCard,
-  CertificateCaseCard,
-} from "./CaseStudyCard";
+import { PROJECTS_LIST, CERTIFICATES_LIST } from "../data/portfolioData";
+import { CaseStudyCard, CertificateCaseCard } from "./CaseStudyCard";
 import { ProjectItem, CertificateItem } from "../types";
 
 interface ExperienceSectionProps {
@@ -58,7 +52,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
       setPreviewImage({
         url: cert.badgeUrl,
         title: cert.title,
-        subtitle: `${cert.issuer} (${cert.year}) • ID: ${cert.credentialId}`,
+        subtitle: `${cert.issuer} (${cert.year})`,
       });
     }
   };

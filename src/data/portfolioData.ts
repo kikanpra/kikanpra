@@ -71,19 +71,14 @@ export const CERTIFICATES_LIST: CertificateItem[] = [
     title: "Desain Grafis Kegiatan Seminar",
     issuer: "UNITED CITIES AND LOCAL GOVERNMENTS ASIA-PACIFIC",
     year: "2026",
-    credentialId: "Desain-Grafis-Kegiatan-Seminar-2026",
-    description:
-      "Comprehensive qualification in user research, wireframing, interactive prototyping, and usability testing methodologies.",
     badgeUrl: "/images/ser1.png",
   },
+
   {
     id: "c2",
     title: "Program Kreativitas Mahasiswa (PKM) Bidang GFT",
     issuer: "Kemdikbudristek RI",
     year: "2024",
-    credentialId: "PKM-GFT-UHO-2025",
-    description:
-      "Pengajuan proposal Gagasan Futuristik Tertulis (GFT) yang visioner dan realistis, bertujuan untuk menawarkan solusi inovatif terhadap permasalahan bangsa dan global ke depannya.",
     badgeUrl: "/images/pkm.png",
   },
   {
@@ -91,9 +86,6 @@ export const CERTIFICATES_LIST: CertificateItem[] = [
     title: "Microsoft Azure AI Fundamentals",
     issuer: "Talenta AI Indonesia",
     year: "2024",
-    credentialId: "MAAIF-2024",
-    description:
-      "Sertifikat kelulusan atas keberhasilan menyelesaikan program Microsoft Azure AI Fundamentals yang diselenggarakan oleh Microsoft, Kartu Prakerja, dan Mereka.",
     badgeUrl: "/images/AI digital.png",
   },
 ];

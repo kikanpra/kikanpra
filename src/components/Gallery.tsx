@@ -1,5 +1,17 @@
 import React from "react";
 
+const GALLERY_ITEMS = [
+  {
+    image: "/images/hmti1.jpg",
+    title: "Himpunan Mahasiswa Teknik Informatika",
+  },
+  { image: "/images/genbi.webp", title: "GenBI (Generasi Baru Indonesia)" },
+  {
+    image: "/images/48sultra.jpg",
+    title: "48Sultra",
+  },
+];
+
 export const GallerySection: React.FC = () => {
   return (
     <section
@@ -45,28 +57,22 @@ export const GallerySection: React.FC = () => {
 
         {/* Gallery Grid */}
         <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {/* Gallery Items - Placeholder */}
-          {[1, 2, 3, ].map((item) => (
+          {GALLERY_ITEMS.map((item) => (
             <div
-              key={item}
+              key={item.image}
               className="group relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-[#27459e]/40 to-[#A8E86C]/20 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
             >
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="text-center">
-                <div className="text-4xl font-bold text-white/20 mb-2">
-                    {item}
-                  </div>
-                  <p className="text-sm text-slate-400">Gallery Item</p>
-                </div>
-              </div>
+              <img
+                src={item.image}
+                alt={item.title}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
 
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-6">
                 <div>
-                  <h3 className="text-white font-bold text-lg">
-                    Proyek {item}
-                  </h3>
-                  <p className="text-slate-300 text-sm">Desain Kreatif</p>
+                  <h3 className="text-white font-bold text-lg">{item.title}</h3>
                 </div>
               </div>
             </div>

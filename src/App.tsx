@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { MarqueeBanner } from "./components/MarqueeBanner";
@@ -20,12 +20,6 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(
     null,
   );
-
-  useEffect(() => {
-    // Ensure dark class is always active permanently
-    document.documentElement.classList.add("dark");
-    localStorage.removeItem("kikan_portfolio_theme");
-  }, []);
 
   const handleHireMeClick = () => {
     setSelectedProject(null);
@@ -73,7 +67,7 @@ export default function App() {
     return (
       <div
         id="kikan-project-detail-view"
-        className="min-h-screen bg-[#FFFFFF] text-slate-900 font-sans selection:bg-[#A8E86C] selection:text-black"
+        className="min-h-screen bg-[#0F0F0F] text-slate-100 font-sans selection:bg-[#A8E86C] selection:text-black"
       >
         <ProjectDetail
           project={selectedProject}

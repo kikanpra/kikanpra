@@ -167,7 +167,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
       ========================================= */}
 
       <div
-        className="absolute top-6 right-0 font-display text-[14vw] font-black leading-none text-white/[0.04] dark:text-white/[0.04] pointer-events-none select-none tracking-tight overflow-hidden"
+        className="absolute top-6 right-0 font-display text-[14vw] font-black leading-none text-white/[0.04] pointer-events-none select-none tracking-tight overflow-hidden"
         aria-hidden="true"
       >
         ABOUT ME
@@ -232,18 +232,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
             {/* Heading */}
             <h2
               id="about-heading"
-              className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold :text-white leading-tight mb-8"
+              className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight mb-8"
             >
               Hi, Saya{" "}
-              <span className="text-[#A8E86C]">
-                {HERO_DATA.fullName}
-              </span>
+              <span className="text-[#A8E86C]">{HERO_DATA.fullName}</span>
             </h2>
 
             {/* Bio */}
             <p
               id="about-bio-text"
-              className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-10 leading-relaxed font-normal"
+              className="text-base sm:text-lg text-slate-300 mb-10 leading-relaxed font-normal"
             >
               {HERO_DATA.bio}
             </p>
@@ -254,11 +252,11 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
 
             <div
               id="about-stats-grid"
-              className="grid grid-cols-3 gap-4 sm:gap-8 mb-12 border-y :border-white/10 py-6"
+              className="grid grid-cols-3 gap-4 sm:gap-8 mb-12 border-y border-white/10 py-6"
             >
               {/* PROJECTS */}
               <div>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold :text-[#A8E86C] mb-1">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#A8E86C] mb-1">
                   <AnimatedCounter
                     target={projectsTarget}
                     suffix="+"
@@ -267,14 +265,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+                <div className="text-xs sm:text-sm font-semibold text-slate-400">
                   Project Completed
                 </div>
               </div>
 
               {/* CERTIFICATES */}
               <div>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#27459e] dark:text-[#A8E86C] mb-1">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#A8E86C] mb-1">
                   <AnimatedCounter
                     target={certificatesTarget}
                     suffix="+"
@@ -283,14 +281,14 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
                   />
                 </div>
 
-                <div className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+                <div className="text-xs sm:text-sm font-semibold text-slate-400">
                   Certificates
                 </div>
               </div>
 
               {/* EXPERIENCE */}
               <div>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#27459e] dark:text-[#A8E86C] mb-1">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-[#A8E86C] mb-1">
                   <AnimatedCounter
                     target={industriesTarget}
                     suffix="+"

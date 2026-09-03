@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   X,
   ExternalLink,
@@ -12,15 +12,15 @@ import {
   Briefcase,
   GraduationCap,
   Award,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+} from "lucide-react";
+import confetti from "canvas-confetti";
 import {
   PROJECTS_LIST,
   CERTIFICATES_LIST,
   SERVICES_LIST,
   HERO_DATA,
-} from '../data/portfolioData';
-import { ProjectItem, ServiceItem } from '../types';
+} from "../data/portfolioData";
+import { ProjectItem, ServiceItem } from "../types";
 
 // ======================= PORTFOLIO MODAL =======================
 interface PortfolioModalProps {
@@ -229,7 +229,9 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
               <h2 className="text-xl sm:text-2xl font-display font-extrabold text-slate-900 dark:text-white">
                 Curriculum Vitae
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{HERO_DATA.fullName} • Senior Designer</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {HERO_DATA.fullName} • Senior Designer
+              </p>
             </div>
           </div>
 
@@ -259,10 +261,12 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
               {HERO_DATA.fullName}
             </h1>
             <p className="text-base font-semibold text-slate-600 dark:text-slate-300 mt-1">
-              Creative Director &amp; Freelance Designer ({HERO_DATA.yearsExperience} Experience)
+              Creative Director &amp; Freelance Designer (
+              {HERO_DATA.yearsExperience} Experience)
             </p>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
-              {HERO_DATA.email} • {HERO_DATA.location} • Available for remote and hybrid contracts
+              {HERO_DATA.email} • {HERO_DATA.location} • Available for remote
+              and hybrid contracts
             </p>
           </div>
 
@@ -285,7 +289,10 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
             </h3>
             <div className="grid sm:grid-cols-2 gap-3">
               {CERTIFICATES_LIST.map((cert) => (
-                <div key={cert.id} className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-100 dark:border-white/5">
+                <div
+                  key={cert.id}
+                  className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-100 dark:border-white/5"
+                >
                   <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
                     <Award className="w-4 h-4 text-[#27459e] dark:text-[#A8E86C] shrink-0" />
                     <span>{cert.title}</span>
@@ -293,7 +300,6 @@ export const CVModal: React.FC<CVModalProps> = ({ isOpen, onClose }) => {
                   <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     {cert.issuer} ({cert.year})
                   </div>
-                  <div className="text-[10px] font-mono opacity-50 mt-1">ID: {cert.credentialId}</div>
                 </div>
               ))}
             </div>
@@ -334,7 +340,9 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             <div className="text-xs font-bold text-[#A8E86C] uppercase tracking-wider mb-2">
               Service Breakdown
             </div>
-            <h2 className="text-2xl sm:text-3xl font-display font-extrabold">{service.title}</h2>
+            <h2 className="text-2xl sm:text-3xl font-display font-extrabold">
+              {service.title}
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -356,7 +364,9 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                 <DollarSign className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Starting at</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  Starting at
+                </div>
                 <div className="text-lg font-display font-extrabold text-slate-900 dark:text-white">
                   {service.pricingStarting}
                 </div>
@@ -368,7 +378,9 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
                 <Clock className="w-5 h-5" />
               </div>
               <div>
-                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">Turnaround</div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+                  Turnaround
+                </div>
                 <div className="text-lg font-display font-extrabold text-slate-900 dark:text-white">
                   {service.turnaround}
                 </div>
@@ -382,7 +394,10 @@ export const ServiceDetailModal: React.FC<ServiceDetailModalProps> = ({
             </h4>
             <div className="space-y-2.5">
               {service.deliverables.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium">
+                <div
+                  key={idx}
+                  className="flex items-center gap-2.5 text-xs sm:text-sm text-slate-700 dark:text-slate-300 font-medium"
+                >
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
                   <span>{item}</span>
                 </div>
@@ -436,7 +451,9 @@ export const AllServicesModal: React.FC<AllServicesModalProps> = ({
             <div className="text-xs font-bold text-[#A8E86C] uppercase tracking-wider mb-1">
               Creative Capabilities
             </div>
-            <h2 className="text-2xl sm:text-3xl font-display font-extrabold">All Services &amp; Packages</h2>
+            <h2 className="text-2xl sm:text-3xl font-display font-extrabold">
+              All Services &amp; Packages
+            </h2>
           </div>
           <button
             onClick={onClose}
@@ -463,7 +480,10 @@ export const AllServicesModal: React.FC<AllServicesModalProps> = ({
                   </p>
                   <div className="space-y-1.5 mb-4">
                     {srv.deliverables.map((del, i) => (
-                      <div key={i} className="text-xs text-slate-700 dark:text-slate-400 flex items-center gap-1.5">
+                      <div
+                        key={i}
+                        className="text-xs text-slate-700 dark:text-slate-400 flex items-center gap-1.5"
+                      >
                         <CheckCircle2 className="w-3.5 h-3.5 text-[#27459e] dark:text-[#A8E86C] shrink-0" />
                         <span>{del}</span>
                       </div>
@@ -497,14 +517,18 @@ export const AllServicesModal: React.FC<AllServicesModalProps> = ({
 // ======================= LEGAL MODAL =======================
 interface LegalModalProps {
   isOpen: boolean;
-  type: 'privacy' | 'terms' | null;
+  type: "privacy" | "terms" | null;
   onClose: () => void;
 }
 
-export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose }) => {
+export const LegalModal: React.FC<LegalModalProps> = ({
+  isOpen,
+  type,
+  onClose,
+}) => {
   if (!isOpen || !type) return null;
 
-  const isPrivacy = type === 'privacy';
+  const isPrivacy = type === "privacy";
 
   return (
     <div
@@ -519,7 +543,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose })
       >
         <div className="p-6 border-b border-slate-100 dark:border-white/10 flex items-center justify-between">
           <h3 className="text-xl font-display font-bold text-slate-900 dark:text-white">
-            {isPrivacy ? 'Privacy Policy' : 'Terms of Service'}
+            {isPrivacy ? "Privacy Policy" : "Terms of Service"}
           </h3>
           <button
             onClick={onClose}
@@ -534,22 +558,35 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose })
           {isPrivacy ? (
             <>
               <p>
-                <strong>Information Collection:</strong> We respect your privacy. Any personal contact details (name, email, project inquiries) submitted through this website are used strictly for client communication and proposal development.
+                <strong>Information Collection:</strong> We respect your
+                privacy. Any personal contact details (name, email, project
+                inquiries) submitted through this website are used strictly for
+                client communication and proposal development.
               </p>
               <p>
-                <strong>Data Protection:</strong> Your information is never sold, shared, or distributed to third parties. All inquiries are treated with strict confidentiality.
+                <strong>Data Protection:</strong> Your information is never
+                sold, shared, or distributed to third parties. All inquiries are
+                treated with strict confidentiality.
               </p>
               <p>
-                <strong>Cookies &amp; Analytics:</strong> We use lightweight local preferences to store your dark mode selection. No tracking cookies are used.
+                <strong>Cookies &amp; Analytics:</strong> We use lightweight
+                local preferences to store your dark mode selection. No tracking
+                cookies are used.
               </p>
             </>
           ) : (
             <>
               <p>
-                <strong>Intellectual Property:</strong> All project visual assets, graphic designs, video compositions, and brand marks displayed in this portfolio are protected by copyright and intellectual property rights belonging to Kikan Pratiwi R. and respective client brands.
+                <strong>Intellectual Property:</strong> All project visual
+                assets, graphic designs, video compositions, and brand marks
+                displayed in this portfolio are protected by copyright and
+                intellectual property rights belonging to Kikan Pratiwi R. and
+                respective client brands.
               </p>
               <p>
-                <strong>Contractual Engagements:</strong> Formal freelance contracts, deliverables, timelines, and milestones are executed under mutually signed agreements prior to project kickoff.
+                <strong>Contractual Engagements:</strong> Formal freelance
+                contracts, deliverables, timelines, and milestones are executed
+                under mutually signed agreements prior to project kickoff.
               </p>
             </>
           )}

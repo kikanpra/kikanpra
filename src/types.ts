@@ -1,7 +1,7 @@
 export interface ProjectItem {
   id: string;
   title: string;
-  category: 'Graphic Design' | 'UI/UX Design' | 'Web Design' | 'Branding';
+  category: "Graphic Design" | "UI/UX Design" | "Web Design" | "Branding";
   client: string;
   year: string;
   heading?: string;
@@ -18,8 +18,6 @@ export interface CertificateItem {
   title: string;
   issuer: string;
   year: string;
-  credentialId: string;
-  description: string;
   badgeUrl?: string;
 }
 
@@ -36,7 +34,7 @@ export interface ExperienceItem {
 export interface ServiceItem {
   id: string;
   title: string;
-  iconName: 'brush' | 'movie_edit' | 'language' | 'palette' | 'sparkles';
+  iconName: "brush" | "movie_edit" | "language" | "palette" | "sparkles";
   description: string;
   isFeatured?: boolean;
   deliverables: string[];

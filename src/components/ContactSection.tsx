@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
 import {
   Mail,
   MapPin,
@@ -157,8 +158,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     };
   }, []);
 
-// Handle Contact Inquiry Form
-  const handleContactSubmit = (e: React.FormEvent) => {
+  // Handle Contact Inquiry Form
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (
@@ -180,7 +181,32 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     setStatus("submitting");
     setErrorMessage("");
 
-    setTimeout(() => {
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      setStatus("error");
+      setErrorMessage(
+        "Email service belum dikonfigurasi. Silakan coba lagi nanti.",
+      );
+      return;
+    }
+
+    try {
+      await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          from_name: formData.fullName.trim(),
+          from_email: formData.email.trim(),
+          subject: formData.subject.trim() || "Portfolio inquiry",
+          message: formData.message.trim(),
+          reply_to: formData.email.trim(),
+        },
+        { publicKey },
+      );
+
       setStatus("success");
       try {
         confetti({
@@ -202,7 +228,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
         });
         setStatus("idle");
       }, 5000);
-    }, 900);
+    } catch (error) {
+      console.error("Error sending contact form with EmailJS:", error);
+      setStatus("error");
+      setErrorMessage(
+        "Pesan belum terkirim. Periksa koneksi Anda dan coba lagi.",
+      );
+    }
   };
 
   // Handle Post Live Comment to Cloud Firestore
@@ -267,7 +299,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
     }
   };
 
-return (
+  return (
     <section
       id="contact"
       className="py-24 md:py-32 bg-[#1b3275] text-white relative overflow-hidden transition-colors duration-300 border-t border-white/10"
@@ -309,7 +341,7 @@ return (
           {/* ========================================================= */}
           {/* BAGIAN 1: KONTAK & PESAN PRIBADI (6 Columns) */}
           {/* ========================================================= */}
-          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
               className="absolute top-0 right-0 w-56 h-56 bg-[#A8E86C]/10 rounded-full blur-2xl pointer-events-none"
@@ -531,14 +563,14 @@ return (
           {/* ========================================================= */}
           {/* BAGIAN 2: LIVE COMMENTS & PUBLIC FEED (6 Columns) */}
           {/* ========================================================= */}
-          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col justify-between relative overflow-hidden">
+          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
               className="absolute top-0 left-0 w-56 h-56 bg-[#27459e]/30 rounded-full blur-2xl pointer-events-none"
               aria-hidden="true"
             />
 
-            <div>
+            <div className="flex flex-col">
               {/* Header with Live Counter Badge & Cloud Status */}
               <div className="flex items-center justify-between gap-3 mb-6">
                 <div className="flex items-center gap-3">
@@ -564,7 +596,6 @@ return (
                   </div>
                 </div>
               </div>
-
               {/* Form Tulis Komentar Langsung */}
               <form
                 onSubmit={handlePostComment}
@@ -628,9 +659,8 @@ return (
                   </button>
                 </div>
               </form>
-
               {/* Scrollable Live Feed List */}
-              <div className="space-y-3.5 max-h-[380px] overflow-y-auto pr-1.5 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
+              <div className="space-y-3.5 max-h-[275px] overflow-y-auto overflow-x-hidden pr-1.5 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {isLoadingComments ? (
                   <div className="py-12 flex flex-col items-center justify-center text-slate-400 gap-2">
                     <Loader2 className="w-6 h-6 animate-spin text-[#A8E86C]" />
@@ -678,8 +708,7 @@ return (
                         {comment.message}
                       </p>
 
-                      <div className="flex items-center justify-end pt-2 border-t border-white/5">
-                      </div>
+                      <div className="flex items-center justify-end pt-2 border-t border-white/5"></div>
                     </div>
                   ))
                 )}
@@ -690,9 +719,7 @@ return (
             <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
               <span className="flex items-center gap-1.5">
                 <MessageCircle className="w-3.5 h-3.5 text-[#A8E86C]" />
-                <span>
-                  Semua ulasan bisa dilihat secara publik.
-                </span>
+                <span>Semua ulasan bisa dilihat secara publik.</span>
               </span>
             </div>
           </div>
