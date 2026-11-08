@@ -26,6 +26,8 @@ import {
 import { db } from "../lib/firebase";
 import { HERO_DATA } from "../data/portfolioData";
 import { ContactFormData } from "../types";
+import { motion, useReducedMotion } from "motion/react";
+import { ScrollReveal, ScrollRevealHeading } from "./ScrollReveal";
 
 interface LiveComment {
   id: string;
@@ -70,6 +72,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
   onOpenPrivacy,
   onOpenTerms,
 }) => {
+  const shouldReduceMotion = useReducedMotion();
   // Contact Form State
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: "",
@@ -328,12 +331,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             — Kontak
           </div>
 
-          <h2
-            id="contact-main-heading"
-            className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight"
-          >
-            Hubungi <span className="text-[#A8E86C]">Saya</span>
-          </h2>
+          <ScrollRevealHeading>
+            <h2
+              id="contact-main-heading"
+              className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight"
+            >
+              Hubungi <span className="text-[#A8E86C]">Saya</span>
+            </h2>
+          </ScrollRevealHeading>
         </div>
 
         {/* 2-Column Balanced Grid: Contact Form (Left) & Live Comments Feed (Right) */}
@@ -341,7 +346,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
           {/* ========================================================= */}
           {/* BAGIAN 1: KONTAK & PESAN PRIBADI (6 Columns) */}
           {/* ========================================================= */}
-          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
+          <ScrollReveal className="lg:col-span-6">
+          <div className="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
               className="absolute top-0 right-0 w-56 h-56 bg-[#A8E86C]/10 rounded-full blur-2xl pointer-events-none"
@@ -513,11 +519,25 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                     />
                   </div>
 
-                  <button
+                  <motion.button
                     id="btn-send-contact-message"
                     type="submit"
                     disabled={status === "submitting"}
-                    className="w-full py-3.5 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-xl font-display font-bold text-sm flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-98 transition-all duration-200 shadow-lg shadow-[#A8E86C]/20 cursor-pointer disabled:opacity-50"
+                    className="w-full py-3.5 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-xl font-display font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-[#A8E86C]/20 cursor-pointer disabled:opacity-50"
+                    whileHover={
+                      shouldReduceMotion || status === "submitting"
+                        ? undefined
+                        : { y: -2, scale: 1.01 }
+                    }
+                    whileTap={
+                      shouldReduceMotion || status === "submitting"
+                        ? undefined
+                        : { scale: 0.98 }
+                    }
+                    transition={{
+                      duration: 0.2,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
                   >
                     {status === "submitting" ? (
                       <>
@@ -530,7 +550,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
                         <Send className="w-4 h-4" />
                       </>
                     )}
-                  </button>
+                  </motion.button>
                 </form>
               )}
             </div>
@@ -559,11 +579,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               </div>
             </div>
           </div>
+          </ScrollReveal>
 
           {/* ========================================================= */}
           {/* BAGIAN 2: LIVE COMMENTS & PUBLIC FEED (6 Columns) */}
           {/* ========================================================= */}
-          <div className="lg:col-span-6 bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
+          <ScrollReveal className="lg:col-span-6" delay={0.12}>
+          <div className="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-9 md:p-10 border border-white/10 shadow-2xl flex flex-col relative overflow-hidden">
             {/* Top Glow Accent */}
             <div
               className="absolute top-0 left-0 w-56 h-56 bg-[#27459e]/30 rounded-full blur-2xl pointer-events-none"
@@ -723,6 +745,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
               </span>
             </div>
           </div>
+          </ScrollReveal>
         </div>
 
         {/* Footer Row */}

@@ -36,7 +36,11 @@ export const PROJECTS_LIST: ProjectItem[] = [
     client: "Fakultas Teknik Universitas Halu Oleo",
     year: "2026",
     description:
-      "Backdrop seminar yang dirancang untuk menciptakan identitas visual yang kohesif dan profesional, meningkatkan pengalaman peserta, dan memperkuat citra merek acara.",
+      "Kegiatan seminar membutuhkan identitas visual yang kuat dan konsisten untuk merepresentasikan tema acara serta institusi penyelenggara. Tanpa desain backdrop yang terarah, tampilan panggung berisiko terlihat kurang menarik dan tidak mampu membangun suasana acara yang profesional.",
+    solution:
+      "Merancang backdrop seminar profesional yang memadukan identitas institusi, informasi acara, dan elemen visual yang selaras ke dalam sebuah komposisi yang utuh. Berfokus pada hierarki visual, tata letak yang seimbang, dan penerapan branding yang konsisten untuk menciptakan suasana acara yang menarik dan mudah dikenali.",
+    projectBackground:
+      "Fakultas Teknik Universitas Halu Oleo membutuhkan desain backdrop seminar sebagai elemen visual utama dalam mendukung penyelenggaraan acara. Desain ini dibuat untuk memperkuat identitas institusi, merepresentasikan karakter kegiatan, serta menciptakan tampilan panggung yang informatif dan profesional.",
     tags: ["Event Design", "Backdrop", "Print Design"],
     metrics: "+42% Brand Recall",
     imageUrl: "/images/backdrop.png",
@@ -48,20 +52,30 @@ export const PROJECTS_LIST: ProjectItem[] = [
     client: "UP BK Universitas Halu Oleo",
     year: "2026",
     description:
-      "Atika Care adalah webstie pendaftaran konseling online Universitas Halu Oleo yang dirancang untuk memberikan pengalaman pengguna yang intuitif, responsif, dan aman bagi mahasiswa yang mencari layanan konseling.",
+      "Mahasiswa membutuhkan akses layanan konseling yang mudah dan praktis, tetapi proses pendaftaran secara konvensional dapat menjadi hambatan dari segi aksesibilitas, kejelasan informasi, dan kemudahan penggunaan. Oleh karena itu, diperlukan sebuah platform digital terpusat yang dapat mempermudah mahasiswa dalam mengakses layanan konseling di lingkungan universitas.",
+    solution:
+      "Mendesain platform digital berbasis web yang memudahkan mahasiswa dalam mengakses layanan konseling. Fokus pada pengalaman pengguna yang intuitif, navigasi yang jelas, dan antarmuka yang responsif untuk memastikan mahasiswa dapat dengan mudah menemukan informasi, mendaftar, dan berinteraksi dengan layanan konseling secara efisien.",
+    projectBackground:
+      "UP BK Universitas Halu Oleo ingin meningkatkan aksesibilitas layanan konseling bagi mahasiswa. Dengan adanya platform digital ini, diharapkan mahasiswa dapat lebih mudah mendapatkan dukungan psikologis dan bimbingan akademik melalui proses pendaftaran yang lebih cepat dan nyaman.",
+    software: ["Figma", "Adobe Illustrator"],
     tags: ["UI/UX", "Figma", "Booking System"],
     imageUrl: "/images/web.png",
   },
   {
     id: "p3",
-    title: "PhiaNews Social Media Coverage",
+    title: "PhiaNews Social Media",
     category: "Branding",
-    client: "PhiaNews",
+    client: "Phia",
     year: "2026",
     description:
-      "Produksi video berita yang bergerak cepat dan dioptimalkan untuk platform media sosial. Menampilkan takarir (subtitle) dinamis, grafis gerak yang informatif, serta penyampaian cerita yang ringkas dan dirancang khusus untuk memikat audiens digital PhiaNews.",
+      "Penyajian berita yang hanya mengandalkan teks sering kali membuat audiens merasa bosan dan kurang tertarik untuk mengikuti perkembangan informasi. Di sisi lain, maraknya penyebaran informasi di media sosial juga menimbulkan keraguan terhadap keaslian dan kebenaran berita yang diterima masyarakat. Hal ini menjadi tantangan dalam menghadirkan informasi yang menarik sekaligus dapat dipercaya.",
+    solution:
+      "Menghadirkan berita dalam format video pendek yang lebih dinamis dan mudah dipahami melalui kombinasi narasi, takarir (subtitle) dinamis, serta grafis gerak yang informatif. Proses produksi dan penyuntingan dirancang untuk menyampaikan informasi secara ringkas, menarik, dan tetap memperhatikan keakuratan sumber berita agar audiens memperoleh informasi yang lebih jelas dan terpercaya.",
+    projectBackground:
+      "PhiaNews merupakan proyek produksi konten berita digital yang berfokus pada penyampaian informasi aktual melalui media audiovisual. Proyek ini bertujuan menghadirkan alternatif penyajian berita yang lebih menarik bagi audiens digital sekaligus mendukung penyampaian informasi yang akurat dan dapat dipertanggungjawabkan.",
+    software: ["Adobe Illustrator", "CapCut"],
     tags: ["CapCut", "News Editing", "Sosial Media"],
-    imageUrl: "/images/phianews.png",
+    imageUrl: "/images/phia.png",
   },
 ];
 

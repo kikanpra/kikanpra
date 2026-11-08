@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Code2, Award, Layers, ArrowRight, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { PROJECTS_LIST, CERTIFICATES_LIST } from "../data/portfolioData";
 import { CaseStudyCard, CertificateCaseCard } from "./CaseStudyCard";
 import { ProjectItem, CertificateItem } from "../types";
+import { ScrollRevealHeading } from "./ScrollReveal";
 
 interface ExperienceSectionProps {
   onOpenPortfolio: () => void;
@@ -16,6 +18,7 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
   onSelectProject,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>("projects");
+  const shouldReduceMotion = useReducedMotion();
   const [previewImage, setPreviewImage] = useState<{
     url: string;
     title: string;
@@ -86,12 +89,14 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             — Pendidikan &amp; Projek
           </div>
 
-          <h2
-            id="portfolio-showcase-heading"
-            className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight"
-          >
-            Portfolio <span className="text-[#A8E86C]">Showcase</span>
-          </h2>
+          <ScrollRevealHeading>
+            <h2
+              id="portfolio-showcase-heading"
+              className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white mb-4 leading-tight"
+            >
+              Portfolio <span className="text-[#A8E86C]">Showcase</span>
+            </h2>
+          </ScrollRevealHeading>
         </div>
 
         {/* Tab Navigation Pill Bar with Glassmorphism */}
@@ -103,21 +108,36 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
             {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
-                <button
+                <motion.button
                   key={tab.id}
                   id={`tab-btn-${tab.id}`}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 py-3 sm:py-3.5 px-3 sm:px-6 rounded-xl sm:rounded-2xl font-display font-bold text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 sm:gap-2.5 transition-all duration-300 cursor-pointer ${
+                  aria-pressed={isActive}
+                  className={`relative flex-1 py-3 sm:py-3.5 px-3 sm:px-6 rounded-xl sm:rounded-2xl font-display font-bold text-xs sm:text-sm md:text-base flex items-center justify-center gap-2 sm:gap-2.5 transition-colors duration-300 cursor-pointer ${
                     isActive
-                      ? "bg-[#27459e] text-white shadow-lg shadow-[#27459e]/40 border border-white/15"
-                      : "text-slate-300 hover:text-white hover:bg-white/10"
+                      ? "text-white"
+                      : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  <span className={isActive ? "text-[#A8E86C]" : "opacity-70"}>
+                  {isActive && (
+                    <motion.span
+                      layoutId="showcase-active-tab"
+                      className="absolute inset-0 rounded-xl sm:rounded-2xl bg-[#27459e] shadow-lg shadow-[#27459e]/40 border border-white/15"
+                      transition={{
+                        duration: shouldReduceMotion ? 0 : 0.3,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                    />
+                  )}
+                  <span
+                    className={`relative z-10 ${
+                      isActive ? "text-[#A8E86C]" : "opacity-70"
+                    }`}
+                  >
                     {tab.icon}
                   </span>
-                  <span>{tab.label}</span>
-                </button>
+                  <span className="relative z-10">{tab.label}</span>
+                </motion.button>
               );
             })}
           </div>
@@ -125,63 +145,87 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
 
         {/* Tab Content Display Area */}
         <div id="showcase-tab-content" className="min-h-[420px]">
-          {/* TAB 1: PROJECTS (New Reference Card Style) */}
-          {activeTab === "projects" && (
-            <div className="animate-in fade-in zoom-in-98 duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {PROJECTS_LIST.slice(0, 6).map((project, idx) => (
-                  <CaseStudyCard
-                    key={project.id}
-                    project={project}
-                    index={idx}
-                    onPreview={handleProjectPreview}
-                    cardBgClass="bg-[#FAF9F5] dark:bg-slate-900"
-                    notchFillClass="text-[#FAF9F5] dark:text-slate-900"
-                  />
-                ))}
-              </div>
+          <AnimatePresence mode="wait" initial={false}>
+            {activeTab === "projects" ? (
+              <motion.div
+                key="projects"
+                initial={
+                  shouldReduceMotion ? false : { y: 10, opacity: 0 }
+                }
+                animate={{ y: 0, opacity: 1 }}
+                exit={
+                  shouldReduceMotion ? undefined : { y: -10, opacity: 0 }
+                }
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {PROJECTS_LIST.slice(0, 6).map((project, idx) => (
+                    <CaseStudyCard
+                      key={project.id}
+                      project={project}
+                      index={idx}
+                      onPreview={handleProjectPreview}
+                      cardBgClass="bg-[#FAF9F5] dark:bg-slate-900"
+                      notchFillClass="text-[#FAF9F5] dark:text-slate-900"
+                    />
+                  ))}
+                </div>
 
-              {/* View All Button */}
-              <div className="text-center mt-12">
-                <button
-                  id="btn-view-all-portfolio"
-                  onClick={onOpenPortfolio}
-                  className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-full font-display font-bold text-sm sm:text-base shadow-lg shadow-[#A8E86C]/20 transition-all duration-300 hover:scale-105 cursor-pointer"
-                >
-                  <span>Selengkapnya</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
+                {/* View All Button */}
+                <div className="text-center mt-12">
+                  <motion.button
+                    id="btn-view-all-portfolio"
+                    onClick={onOpenPortfolio}
+                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-full font-display font-bold text-sm sm:text-base shadow-lg shadow-[#A8E86C]/20 transition-all duration-300 cursor-pointer"
+                    whileHover={shouldReduceMotion ? undefined : { scale: 1.04, y: -2 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span>Selengkapnya</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="certificates"
+                initial={
+                  shouldReduceMotion ? false : { y: 10, opacity: 0 }
+                }
+                animate={{ y: 0, opacity: 1 }}
+                exit={
+                  shouldReduceMotion ? undefined : { y: -10, opacity: 0 }
+                }
+                transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {CERTIFICATES_LIST.map((cert, idx) => (
+                    <CertificateCaseCard
+                      key={cert.id}
+                      certificate={cert}
+                      index={idx}
+                      onPreview={handleCertificatePreview}
+                      cardBgClass="bg-[#FAF9F5] dark:bg-slate-900"
+                      notchFillClass="text-[#FAF9F5] dark:text-slate-900"
+                    />
+                  ))}
+                </div>
 
-          {/* TAB 2: CERTIFICATES */}
-          {activeTab === "certificates" && (
-            <div className="animate-in fade-in zoom-in-98 duration-300">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {CERTIFICATES_LIST.map((cert, idx) => (
-                  <CertificateCaseCard
-                    key={cert.id}
-                    certificate={cert}
-                    index={idx}
-                    onPreview={handleCertificatePreview}
-                    cardBgClass="bg-[#FAF9F5] dark:bg-slate-900"
-                    notchFillClass="text-[#FAF9F5] dark:text-slate-900"
-                  />
-                ))}
-              </div>
-
-              <div className="text-center mt-12">
-                <button
-                  onClick={onOpenPortfolio}
-                  className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-full font-display font-bold text-sm sm:text-base shadow-lg shadow-[#A8E86C]/20 transition-all duration-300 hover:scale-105 cursor-pointer"
-                >
-                  <span>Selengkapnya</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
+                <div className="text-center mt-12">
+                  <motion.button
+                    onClick={onOpenPortfolio}
+                    className="inline-flex items-center gap-2.5 px-8 py-4 bg-[#A8E86C] hover:bg-[#97d85b] text-black rounded-full font-display font-bold text-sm sm:text-base shadow-lg shadow-[#A8E86C]/20 transition-all duration-300 cursor-pointer"
+                    whileHover={shouldReduceMotion ? undefined : { scale: 1.04, y: -2 }}
+                    whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <span>Selengkapnya</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </motion.button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

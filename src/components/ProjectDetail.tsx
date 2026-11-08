@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ArrowLeft, X } from "lucide-react";
 import { ProjectItem } from "../types";
 import { HERO_DATA } from "../data/portfolioData";
+import { motion, useReducedMotion } from "motion/react";
 
 interface ProjectDetailProps {
   project: ProjectItem;
@@ -13,26 +14,6 @@ interface ProjectDetailProps {
 // Authentic Software Brand Icon Badges
 export const renderSoftwareBadgeIcon = (name: string) => {
   const normalized = name.toLowerCase();
-
-  if (normalized.includes("photoshop") || normalized === "ps") {
-    return (
-      <div className="w-10 h-10 rounded-xl bg-[#001E36] border border-[#31A8FF]/40 flex items-center justify-center shadow-sm shrink-0 select-none">
-        <span className="font-extrabold text-[#31A8FF] text-base font-sans tracking-tight leading-none">
-          Ps
-        </span>
-      </div>
-    );
-  }
-
-  if (normalized.includes("illustrator") || normalized === "ai") {
-    return (
-      <div className="w-10 h-10 rounded-xl bg-[#330000] border border-[#FF9A00]/40 flex items-center justify-center shadow-sm shrink-0 select-none">
-        <span className="font-extrabold text-[#FF9A00] text-base font-sans tracking-tight leading-none">
-          Ai
-        </span>
-      </div>
-    );
-  }
 
   if (normalized.includes("figma")) {
     return (
@@ -131,19 +112,10 @@ onBack,
 onOpenPrivacy,
 onOpenTerms,
 }) => {
-  // Scroll to top upon opening
-useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-}, [project.id]);
+  const shouldReduceMotion = useReducedMotion();
 
 const handleBackClick = () => {
     onBack();
-    setTimeout(() => {
-    const experienceSection = document.getElementById("experience");
-    if (experienceSection) {
-        experienceSection.scrollIntoView({ behavior: "smooth" });
-    }
-    }, 100);
 };
 
 const projectImage =
@@ -153,7 +125,7 @@ const projectImage =
 const softwareList =
     project.software && project.software.length > 0
     ? project.software
-    : ["Adobe Photoshop", "Adobe Illustrator", "Figma"];
+    : ["Figma"];
 
 return (
     <div
@@ -170,10 +142,18 @@ return (
         className="relative min-h-[460px] sm:min-h-[520px] md:min-h-[580px] lg:aspect-[16/7] w-full overflow-hidden flex flex-col justify-between p-6 sm:p-10 md:p-14 lg:p-16"
         >
           {/* Background Image */}
-        <img
+        <motion.img
             src={projectImage}
             alt={project.title}
             referrerPolicy="no-referrer"
+            initial={
+                shouldReduceMotion ? false : { opacity: 0, scale: 1.04 }
+            }
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+                duration: shouldReduceMotion ? 0 : 0.8,
+                ease: [0.22, 1, 0.36, 1],
+            }}
             className="absolute inset-0 w-full h-full object-cover object-center"
         />
 
@@ -194,24 +174,45 @@ return (
         />
 
           {/* BOTTOM HERO CONTENT (2 Columns: Title Left, Client Right) */}
-        <div
+        <motion.div
             id="hero-bottom-content"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+                duration: shouldReduceMotion ? 0 : 0.65,
+                delay: shouldReduceMotion ? 0 : 0.18,
+                ease: [0.22, 1, 0.36, 1],
+            }}
             className="relative z-20 flex flex-col md:flex-row md:items-end justify-between gap-6 pt-16 sm:pt-24 mt-auto max-w-7xl mx-auto w-full"
         >
             {/* BAGIAN KIRI BAWAH HERO */}
             <div className="max-w-3xl">
             
-            <h1
+            <motion.h1
                 id="hero-project-title"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    duration: shouldReduceMotion ? 0 : 0.6,
+                    delay: shouldReduceMotion ? 0 : 0.3,
+                    ease: [0.22, 1, 0.36, 1],
+                }}
                 className="text-4xl sm:text-6xl md:text-7xl lg:text-[52px] font-extrabold text-white leading-[0.98] sm:leading-[1.02] tracking-tight line-clamp-2 drop-shadow-md"
             >
                 {project.title}
-            </h1>
+            </motion.h1>
             </div>
 
             {/* BAGIAN KANAN BAWAH HERO */}
-            <div
+            <motion.div
             id="hero-client-box"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+                duration: shouldReduceMotion ? 0 : 0.55,
+                delay: shouldReduceMotion ? 0 : 0.42,
+                ease: [0.22, 1, 0.36, 1],
+            }}
             className="text-left md:text-right shrink-0 md:pb-1"
             >
             <div
@@ -226,8 +227,8 @@ return (
             >
                 {project.client}
             </div>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
         </div>
 
         {/* ======================================== */}
@@ -239,9 +240,17 @@ return (
         >
         <div className="max-w-7xl mx-auto mb-8">
             {/* Back Button */}
-            <button
+            <motion.button
             id="btn-back-to-portfolio"
             onClick={handleBackClick}
+            whileHover={
+                shouldReduceMotion ? undefined : { x: -3, scale: 1.02 }
+            }
+            whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+            transition={{
+                duration: 0.2,
+                ease: [0.22, 1, 0.36, 1],
+            }}
             className="group flex items-center gap-3.5 px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 transition-all border border-slate-300 cursor-pointer shadow-sm hover:shadow-md"
             >
             <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center group-hover:-translate-x-0.5 transition-transform">
@@ -250,22 +259,32 @@ return (
             <span className="font-bold text-base sm:text-lg tracking-tight group-hover:text-[#FF6B00] transition-colors pr-1">
                 Kembali
             </span>
-            </button>
+            </motion.button>
         </div>
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             {/* KOLOM KIRI: ~58% (lg:col-span-7) */}
-            <div id="col-project-description" className="lg:col-span-7">
+            <motion.div
+                id="col-project-description"
+                className="lg:col-span-7"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    duration: shouldReduceMotion ? 0 : 0.6,
+                    delay: shouldReduceMotion ? 0 : 0.28,
+                    ease: [0.22, 1, 0.36, 1],
+                }}
+            >
             <div
                 id="label-description"
                 className="text-[#FF6B00] text-xs sm:text-sm font-bold uppercase tracking-[0.08em] mb-3"
             >
-                DESKRIPSI
+                The Problem
             </div>
 
             <h2
                 id="heading-project-description"
                 className="text-2xl sm:text-3xl md:text-4xl lg:text-[38px] font-extrabold text-[#111111] leading-tight mb-6 tracking-tight"
-             >
+            >
                 {project.heading}
             </h2>
 
@@ -275,10 +294,62 @@ return (
               >
                 {project.description}
               </p>
-            </div>
+
+              {project.solution && (
+                <motion.div
+                  id="project-solution"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.5,
+                    delay: shouldReduceMotion ? 0 : 0.4,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="mt-8"
+                >
+                  <div className="text-[#FF6B00] text-xs sm:text-sm font-bold uppercase tracking-[0.08em] mb-3">
+                    THE SOLUTION
+                  </div>
+                  <p className="text-[#666666] text-base sm:text-lg leading-[1.8] font-normal max-w-2xl">
+                    {project.solution}
+                  </p>
+                </motion.div>
+              )}
+
+              {project.projectBackground && (
+                <motion.div
+                  id="project-background"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: shouldReduceMotion ? 0 : 0.5,
+                    delay: shouldReduceMotion ? 0 : 0.5,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="mt-8"
+                >
+                  <div className="text-[#FF6B00] text-xs sm:text-sm font-bold uppercase tracking-[0.08em] mb-3">
+                    PROJECT BACKGROUND
+                  </div>
+                  <p className="text-[#666666] text-base sm:text-lg leading-[1.8] font-normal max-w-2xl">
+                    {project.projectBackground}
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
 
             {/* KOLOM KANAN: ~42% (lg:col-span-5) */}
-            <div id="col-project-software" className="lg:col-span-5">
+            <motion.div
+                id="col-project-software"
+                className="lg:col-span-5"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                    duration: shouldReduceMotion ? 0 : 0.6,
+                    delay: shouldReduceMotion ? 0 : 0.38,
+                    ease: [0.22, 1, 0.36, 1],
+                }}
+            >
               <div
                 id="label-software"
                 className="text-[#FF6B00] text-xs sm:text-sm font-bold uppercase tracking-[0.08em] mb-4"
@@ -292,19 +363,28 @@ return (
                 className="flex flex-col gap-3 sm:gap-3.5"
               >
                 {softwareList.map((softwareName, index) => (
-                  <div
+                  <motion.div
                     key={`${softwareName}-${index}`}
                     id={`software-card-${index}`}
+                    initial={
+                        shouldReduceMotion ? false : { opacity: 0, y: 14 }
+                    }
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                        duration: shouldReduceMotion ? 0 : 0.45,
+                        delay: shouldReduceMotion ? 0 : 0.48 + index * 0.08,
+                        ease: [0.22, 1, 0.36, 1],
+                    }}
                     className="bg-white border border-[#E5E5E5] hover:border-[#FF6B00]/40 rounded-[16px] px-4 py-3.5 sm:px-5 sm:py-4 flex items-center gap-3.5 shadow-sm hover:shadow-md transition-all duration-200"
                   >
                     {renderSoftwareBadgeIcon(softwareName)}
                     <span className="text-[#111111] font-semibold text-sm sm:text-base tracking-tight">
                       {softwareName}
                     </span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 

@@ -7,6 +7,8 @@ import {
   Html5,
   Css3,
 } from "@thesvg/react";
+import { motion, useReducedMotion } from "motion/react";
+import { ScrollRevealHeading } from "./ScrollReveal";
 
 interface TechItem {
   id: string;
@@ -74,6 +76,8 @@ const techItems: TechItem[] = [
 ];
 
 export const TechStackSection: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section
       id="tech-stack"
@@ -106,15 +110,17 @@ export const TechStackSection: React.FC = () => {
             id="tech-stack-tag"
             className="mb-6 inline-block rounded-full border border-white/10 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide text-[#A8E86C] backdrop-blur-sm sm:text-sm"
           >
-            — Teknologi
+            — Design, Photo & Web Tools
           </div>
 
-          <h2
-            id="tech-stack-heading"
-            className="mb-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl"
-          >
-            Software <span className="text-[#A8E86C]">Skills</span>
-          </h2>
+          <ScrollRevealHeading>
+            <h2
+              id="tech-stack-heading"
+              className="mb-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl"
+            >
+              Software <span className="text-[#A8E86C]">Skills</span>
+            </h2>
+          </ScrollRevealHeading>
         </div>
 
         {/* Tech Grid */}
@@ -132,10 +138,24 @@ export const TechStackSection: React.FC = () => {
             lg:grid-cols-6
           "
         >
-          {techItems.map((tech) => (
-            <div
+          {techItems.map((tech, index) => (
+            <motion.div
               key={tech.id}
               id={`tech-item-${tech.id}`}
+              initial={
+                shouldReduceMotion ? false : { opacity: 0, y: 24, scale: 0.96 }
+              }
+              whileInView={
+                shouldReduceMotion
+                  ? undefined
+                  : { opacity: 1, y: 0, scale: 1 }
+              }
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{
+                duration: shouldReduceMotion ? 0 : 0.55,
+                delay: shouldReduceMotion ? 0 : index * 0.07,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               className="
                 group
                 relative
@@ -224,7 +244,7 @@ export const TechStackSection: React.FC = () => {
               >
                 {tech.name}
               </h3>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

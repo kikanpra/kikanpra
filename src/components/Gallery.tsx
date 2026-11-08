@@ -1,18 +1,67 @@
 import React from "react";
+import { motion, useReducedMotion } from "motion/react";
+import { ScrollRevealHeading } from "./ScrollReveal";
 
 const GALLERY_ITEMS = [
   {
     image: "/images/hmti1.jpg",
     title: "Himpunan Mahasiswa Teknik Informatika",
   },
-  { image: "/images/genbi.webp", title: "GenBI (Generasi Baru Indonesia)" },
+  { image: "/images/genbi.webp", 
+    title: "PudSos GenBI UHO 2025" },
   {
     image: "/images/48sultra.jpg",
-    title: "48Sultra",
+    title: "48Sultra First Snow",
   },
+  {
+    image: "/images/rpl.jpg",
+    title: "RPL 23",
+  },
+  {
+    image: "/images/genbi lf.JPG",
+    title: "Leadership Forum GenBI   Sultra 2026",}
 ];
 
 export const GallerySection: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
+
+  const renderGallerySet = (setId: string, isDuplicate = false) => (
+    <div
+      key={setId}
+      aria-hidden={isDuplicate || undefined}
+      className="flex shrink-0 gap-6 pr-6"
+    >
+      {GALLERY_ITEMS.map((item, index) => (
+        <motion.div
+          key={`${setId}-${item.image}`}
+          initial={shouldReduceMotion || isDuplicate ? false : { opacity: 0, y: 12 }}
+          whileInView={shouldReduceMotion || isDuplicate ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: false, amount: 0.25 }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.45,
+            delay: shouldReduceMotion ? 0 : index * 0.1,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="group relative aspect-square w-[min(82vw,360px)] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#27459e]/40 to-[#A8E86C]/20 shadow-xl transition-all duration-300 hover:border-white/20 sm:w-[min(42vw,360px)] lg:w-[360px]"
+        >
+          <img
+            src={item.image}
+            alt={item.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+
+          {/* Hover overlay */}
+          <div className="absolute inset-0 flex items-end justify-start bg-gradient-to-t from-black/60 via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:p-6">
+            <h3 className="text-sm font-bold text-white sm:text-lg">
+              {item.title}
+            </h3>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+
   return (
     <section
       id="gallery"
@@ -47,36 +96,42 @@ export const GallerySection: React.FC = () => {
             — Gallery
           </div>
 
-          <h2
-            id="gallery-heading"
-            className="mb-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl"
-          >
-            Dokumentasi <span className="text-[#A8E86C]">Kegiatan</span>
-          </h2>
+          <ScrollRevealHeading>
+            <h2
+              id="gallery-heading"
+              className="mb-4 font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl"
+            >
+              Dokumentasi <span className="text-[#A8E86C]">Kegiatan</span>
+            </h2>
+          </ScrollRevealHeading>
         </div>
 
-        {/* Gallery Grid */}
-        <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {GALLERY_ITEMS.map((item) => (
-            <div
-              key={item.image}
-              className="group relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-[#27459e]/40 to-[#A8E86C]/20 border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-            >
-              <img
-                src={item.image}
-                alt={item.title}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-start p-6">
-                <div>
-                  <h3 className="text-white font-bold text-lg">{item.title}</h3>
-                </div>
-              </div>
+        {/* Horizontal gallery ticker */}
+        <div
+          className="relative mx-auto max-w-6xl overflow-hidden"
+          role="region"
+          aria-label="Galeri dokumentasi kegiatan yang bergulir horizontal"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent, black 4%, black 96%, transparent)",
+          }}
+        >
+          {shouldReduceMotion ? (
+            <div className="overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {renderGallerySet("gallery-set-primary")}
             </div>
-          ))}
+          ) : (
+            <motion.div
+              className="flex w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+            >
+              {renderGallerySet("gallery-set-primary")}
+              {renderGallerySet("gallery-set-loop", true)}
+            </motion.div>
+          )}
         </div>
       </div>
     </section>

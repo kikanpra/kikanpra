@@ -6,6 +6,8 @@ export interface ProjectItem {
   year: string;
   heading?: string;
   description: string;
+  solution?: string;
+  projectBackground?: string;
   software?: string[];
   tags: string[];
   imageUrl?: string;

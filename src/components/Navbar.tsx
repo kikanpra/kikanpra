@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 
 interface NavbarProps {
   onOpenPortfolio: () => void;
@@ -10,6 +11,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenPortfolio,
   onContactClick,
 }) => {
+  const shouldReduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -31,8 +33,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <header
+    <motion.header
       id="main-navbar"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: -12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: shouldReduceMotion ? 0 : 0.55,
+        ease: [0.22, 1, 0.36, 1],
+      }}
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled
           ? "bg-[#0F0F0F]/90 backdrop-blur-md shadow-lg border-b border-white/5"
@@ -75,13 +83,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Contact Button */}
           <div className="flex items-center gap-3">
-            <button
+            <motion.button
               onClick={onContactClick}
-              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#27459e] hover:bg-[#4F369B] text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 hover:scale-105 shadow-md shadow-[#27459e]/20 cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-[#27459e] hover:bg-[#4F369B] text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md shadow-[#27459e]/20 cursor-pointer"
+              whileHover={shouldReduceMotion ? undefined : { scale: 1.04, y: -2 }}
+              whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
             >
               <span>Kontak</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-[#A8E86C]" />
-            </button>
+            </motion.button>
 
             {/* Mobile Menu Button */}
             <button
@@ -131,6 +142,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
       )}
-    </header>
+    </motion.header>
   );
 };

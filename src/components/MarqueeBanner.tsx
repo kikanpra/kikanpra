@@ -1,7 +1,9 @@
 import React from 'react';
 import { MARQUEE_ITEMS } from '../data/portfolioData';
+import { useReducedMotion } from 'motion/react';
 
 export const MarqueeBanner: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
   const itemsText = MARQUEE_ITEMS.join(' ✦ ');
 
   return (
@@ -11,7 +13,10 @@ export const MarqueeBanner: React.FC = () => {
       aria-label="Skill Highlights"
     >
       <div className="flex overflow-hidden w-full whitespace-nowrap">
-        <div className="animate-marquee font-display text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase text-[#4F369B] tracking-wide flex items-center">
+        <div
+          className="animate-marquee font-display text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase text-[#4F369B] tracking-wide flex items-center"
+          style={{ animationPlayState: shouldReduceMotion ? 'paused' : 'running' }}
+        >
           <span className="mx-4">{itemsText} ✦</span>
           <span className="mx-4">{itemsText} ✦</span>
           <span className="mx-4">{itemsText} ✦</span>

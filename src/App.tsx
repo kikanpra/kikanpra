@@ -10,8 +10,11 @@ import { GallerySection } from "./components/Gallery";
 import { PortfolioModal, CVModal, LegalModal } from "./components/Modals";
 import { ProjectItem } from "./types";
 import { ProjectDetail } from "./components/ProjectDetail";
+import { ScrollReveal } from "./components/ScrollReveal";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 export default function App() {
+  const shouldReduceMotion = useReducedMotion();
   const [portfolioModalOpen, setPortfolioModalOpen] = useState(false);
   const [cvModalOpen, setCvModalOpen] = useState(false);
   const [legalModalType, setLegalModalType] = useState<
@@ -62,29 +65,6 @@ export default function App() {
     }
   };
 
-  // If a single project is selected, display ONLY the dedicated single-card Project Detail page
-  if (selectedProject) {
-    return (
-      <div
-        id="kikan-project-detail-view"
-        className="min-h-screen bg-[#0F0F0F] text-slate-100 font-sans selection:bg-[#A8E86C] selection:text-black"
-      >
-        <ProjectDetail
-          project={selectedProject}
-          onBack={() => setSelectedProject(null)}
-          onOpenPrivacy={() => setLegalModalType("privacy")}
-          onOpenTerms={() => setLegalModalType("terms")}
-        />
-
-        <LegalModal
-          isOpen={legalModalType !== null}
-          type={legalModalType}
-          onClose={() => setLegalModalType(null)}
-        />
-      </div>
-    );
-  }
-
   return (
     <div
       id="kikan-portfolio-app"
@@ -98,34 +78,48 @@ export default function App() {
 
       <main id="main-content-container">
         {/* Hero Section */}
-        <HeroSection
-          onOpenPortfolio={() => setPortfolioModalOpen(true)}
-          onHireMeClick={handleHireMeClick}
-        />
+        <ScrollReveal>
+          <HeroSection
+            onOpenPortfolio={() => setPortfolioModalOpen(true)}
+            onHireMeClick={handleHireMeClick}
+          />
+        </ScrollReveal>
 
         {/* Endless Marquee Banner */}
-        <MarqueeBanner />
+        <ScrollReveal>
+          <MarqueeBanner />
+        </ScrollReveal>
 
         {/* About Section  (with Blue Background) */}
-        <AboutSection onDownloadCV={() => setCvModalOpen(true)} />
+        <ScrollReveal>
+          <AboutSection onDownloadCV={() => setCvModalOpen(true)} />
+        </ScrollReveal>
 
         {/* Tech Stack & Creative Tools Section (Moved above Portfolio Showcase) */}
-        <TechStackSection />
+        <ScrollReveal>
+          <TechStackSection />
+        </ScrollReveal>
 
         {/* Portfolio Showcase (Education & Work Section) */}
-        <ExperienceSection
-          onOpenPortfolio={() => setPortfolioModalOpen(true)}
-          onSelectProject={(project) => setSelectedProject(project)}
-        />
+        <ScrollReveal>
+          <ExperienceSection
+            onOpenPortfolio={() => setPortfolioModalOpen(true)}
+            onSelectProject={(project) => setSelectedProject(project)}
+          />
+        </ScrollReveal>
 
         {/* Tech Stack Section */}
-        <GallerySection />
+        <ScrollReveal>
+          <GallerySection />
+        </ScrollReveal>
 
         {/* Contact & Footer Section */}
-        <ContactSection
-          onOpenPrivacy={() => setLegalModalType("privacy")}
-          onOpenTerms={() => setLegalModalType("terms")}
-        />
+        <ScrollReveal>
+          <ContactSection
+            onOpenPrivacy={() => setLegalModalType("privacy")}
+            onOpenTerms={() => setLegalModalType("terms")}
+          />
+        </ScrollReveal>
       </main>
 
       {/* Interactive Modals */}
@@ -133,16 +127,76 @@ export default function App() {
         isOpen={portfolioModalOpen}
         onClose={() => setPortfolioModalOpen(false)}
         onSelectProjectForInquiry={handleSelectProjectForInquiry}
-        onViewProjectDetail={(project) => setSelectedProject(project)}
+        onViewProjectDetail={(project) => {
+          setPortfolioModalOpen(false);
+          setSelectedProject(project);
+        }}
       />
 
       <CVModal isOpen={cvModalOpen} onClose={() => setCvModalOpen(false)} />
 
       <LegalModal
-        isOpen={legalModalType !== null}
+        isOpen={legalModalType !== null && !selectedProject}
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
       />
+
+      <AnimatePresence mode="wait">
+        {selectedProject && (
+          <motion.div
+            key={`project-detail-${selectedProject.id}`}
+            id="kikan-project-detail-view"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${selectedProject.title} project details`}
+            initial={
+              shouldReduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    scale: 0.85,
+                    y: 28,
+                    filter: "blur(10px)",
+                  }
+            }
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              filter: "blur(0px)",
+            }}
+            exit={
+              shouldReduceMotion
+                ? undefined
+                : {
+                    opacity: 0,
+                    scale: 0.9,
+                    y: 12,
+                    filter: "blur(8px)",
+                  }
+            }
+            transition={{
+              duration: shouldReduceMotion ? 0 : 0.8,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-[#0F0F0F] text-slate-100 font-sans selection:bg-[#A8E86C] selection:text-black"
+            style={{ transformOrigin: "center center" }}
+          >
+            <ProjectDetail
+              project={selectedProject}
+              onBack={() => setSelectedProject(null)}
+              onOpenPrivacy={() => setLegalModalType("privacy")}
+              onOpenTerms={() => setLegalModalType("terms")}
+            />
+
+            <LegalModal
+              isOpen={legalModalType !== null}
+              type={legalModalType}
+              onClose={() => setLegalModalType(null)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

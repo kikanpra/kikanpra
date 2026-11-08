@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { HERO_DATA } from "../data/portfolioData";
 import { Download } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { ScrollReveal } from "./ScrollReveal";
 
 interface AboutSectionProps {
   onDownloadCV: () => void;
@@ -24,8 +26,14 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   start,
 }) => {
   const [count, setCount] = useState<number>(1);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      setCount(target);
+      return;
+    }
+
     // Belum masuk viewport
     if (!start) {
       setCount(1);
@@ -71,7 +79,7 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [start, target, duration]);
+  }, [shouldReduceMotion, start, target, duration]);
 
   return (
     <span>
@@ -98,6 +106,7 @@ const getNumericValue = (value: string | number): number => {
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
+  const shouldReduceMotion = useReducedMotion();
 
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -179,11 +188,23 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
               LEFT COLUMN
           ========================================= */}
 
-          <div className="lg:col-span-5 relative">
-            <div
-              id="about-experience-card"
-              className="rounded-[2.5rem] sm:rounded-[3rem] aspect-square max-w-[440px] mx-auto relative overflow-hidden shadow-2xl group border border-white/10"
-            >
+          <ScrollReveal className="lg:col-span-5">
+            <div className="relative">
+              <motion.div
+                id="about-experience-card"
+                initial={
+                  shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }
+                }
+                whileInView={
+                  shouldReduceMotion ? undefined : { opacity: 1, scale: 1 }
+                }
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{
+                  duration: shouldReduceMotion ? 0 : 0.8,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="rounded-[2.5rem] sm:rounded-[3rem] aspect-square max-w-[440px] mx-auto relative overflow-hidden shadow-2xl group border border-white/10"
+              >
               {/* Background Picture */}
               <img
                 src={HERO_DATA.aboutImageUrl}
@@ -213,14 +234,16 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
                   Kikan
                 </span>
               </div>
+              </motion.div>
             </div>
-          </div>
+          </ScrollReveal>
 
           {/* =========================================
               RIGHT COLUMN
           ========================================= */}
 
-          <div className="lg:col-span-7">
+          <ScrollReveal className="lg:col-span-7" delay={0.12}>
+            <div>
             {/* Section Tag */}
             <div
               id="about-section-tag"
@@ -308,18 +331,22 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onDownloadCV }) => {
             ========================================= */}
 
             <div className="flex flex-wrap items-center gap-6 sm:gap-8">
-              <a
+              <motion.a
                 id="btn-download-cv"
-                href="https://drive.google.com/drive/folders/1iCr6uWxZbHB-z1pI0aK9WhY23Y_r8L3M?usp=drive_link"
+                href="https://drive.google.com/file/d/1ZWHNVW0VFwuSA-4Asga8PIZvnPkzB0R9/view?usp=drive_link"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#A8E86C] hover:bg-[#A8E86C]/90 text-black px-6 sm:px-8 py-3.5 rounded-full font-bold text-sm sm:text-base flex items-center gap-2.5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg shadow-sm cursor-pointer"
+                className="bg-[#A8E86C] hover:bg-[#A8E86C]/90 text-black px-6 sm:px-8 py-3.5 rounded-full font-bold text-sm sm:text-base flex items-center gap-2.5 transition-all duration-300 hover:shadow-lg shadow-sm cursor-pointer"
+                whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.02 }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.98 }}
+                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Download className="w-5 h-5" />
                 <span>View CV</span>
-              </a>
+              </motion.a>
             </div>
-          </div>
+            </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
